@@ -1,0 +1,37 @@
+{
+  "name": "eshop-agents",
+  "displayName": "eShop AI Agents",
+  "description": "Registers per-persona agents and injects prompts into Copilot Chat.",
+  "version": "0.0.1",
+  "publisher": "eshop",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:eshopAgents.selectAgent"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "eshopAgents.selectAgent",
+        "title": "AI: Select Agent"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.9",
+    "@types/vscode": "^1.85.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0",
+    "vsce": "^3.0.0"
+  }
+}
