@@ -23,7 +23,7 @@ public class SensitiveDataAttribute : Attribute
     /// <summary>
     /// Gets additional notes about the sensitivity or handling requirements.
     /// </summary>
-    public string Notes { get; set; }
+    public string Notes { get; set; } = string.Empty;
 
     /// <summary>
     /// Initializes a new instance of the SensitiveDataAttribute.
