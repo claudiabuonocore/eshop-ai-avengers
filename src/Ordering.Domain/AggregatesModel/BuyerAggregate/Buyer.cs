@@ -6,8 +6,10 @@ public class Buyer
     : Entity, IAggregateRoot
 {
     [Required]
+    [SensitiveData(DataClassification.PII, Notes = "User identity GUID")]
     public string IdentityGuid { get; private set; }
 
+    [SensitiveData(DataClassification.PII, Notes = "Buyer name")]
     public string Name { get; private set; }
 
     private List<PaymentMethod> _paymentMethods;

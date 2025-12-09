@@ -8,4 +8,5 @@ global using eShop.Basket.API.Grpc;
 global using eShop.EventBus.Abstractions;
 global using eShop.EventBus.Events;
 global using eShop.ServiceDefaults;
+global using eShop.Shared;
 global using StackExchange.Redis;

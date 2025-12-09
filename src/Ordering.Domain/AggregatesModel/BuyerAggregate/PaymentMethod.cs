@@ -7,10 +7,14 @@ public class PaymentMethod : Entity
     [Required]
     private string _alias;
     [Required]
+    [SensitiveData(DataClassification.Financial, Notes = "Credit card number - must be masked in logs")]
     private string _cardNumber;
+    [SensitiveData(DataClassification.Financial, Notes = "Card security code - must never appear in logs")]
     private string _securityNumber;
     [Required]
+    [SensitiveData(DataClassification.PII, Notes = "Cardholder name")]
     private string _cardHolderName;
+    [SensitiveData(DataClassification.Financial, Notes = "Card expiration date")]
     private DateTime _expiration;
 
     private int _cardTypeId;

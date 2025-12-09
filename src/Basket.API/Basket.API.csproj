@@ -21,4 +21,8 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Basket.FunctionalTests" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\SensitiveDataAttribute.cs" Link="Attributes\SensitiveDataAttribute.cs" />
+  </ItemGroup>
 </Project>
