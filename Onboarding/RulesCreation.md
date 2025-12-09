@@ -1,5 +1,8 @@
 Final prompt for AI assistants used in this repository:
 
+# Rules Creation
+
+Final prompt for AI assistants used in this repository:
 Act as an AI programming assistant for this .NET 10 monorepo. Follow these rules for every interaction.
 
 - Verbosity: Keep responses concise and actionable.

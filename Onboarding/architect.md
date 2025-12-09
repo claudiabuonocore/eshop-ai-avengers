@@ -36,25 +36,23 @@
 ## How It Works
 
 **Service Orchestration:**
-```
-eShop.AppHost (Aspire) orchestrates all services
-    ↓
-Configures infrastructure (databases, messaging, caching)
-    ↓
-Wires up service dependencies and health checks
-    ↓
-Provides unified dashboard for monitoring
+```mermaid
+flowchart 
+    A[AppHost .NET Aspire] --> B[Configure infrastructure databases, messaging, caching]
+    B --> C[Wire up service dependencies and health checks]
+    C --> D[Unified dashboard for monitoring]
 ```
 
 **Event Flow Example:**
-```
-User places order → Ordering.API → RabbitMQ event
-    ↓                                    ↓
-Identity validation            OrderProcessor consumes event
-    ↓                                    ↓
-Basket cleared                  PaymentProcessor triggered
-    ↓                                    ↓
-Webhooks notified              Order status updated
+```mermaid
+flowchart LR
+    U[User] --> O[Ordering.API]
+    O --> Q[RabbitMQ event]
+    O --> I[Identity validation]
+    Q --> OP[OrderProcessor]
+    OP --> P[PaymentProcessor]
+    P --> S[Order status updated]
+    S --> W[Webhooks notified]
 ```
 
 **Key Features:**
