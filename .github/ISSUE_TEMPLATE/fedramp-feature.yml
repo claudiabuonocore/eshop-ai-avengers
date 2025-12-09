@@ -1,0 +1,87 @@
+name: "FedRAMP Feature"
+description: "Create a new FedRAMP/security feature or enhancement"
+labels:
+  - fedramp
+  - security
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## FedRAMP Feature Request
+
+        Use this template for any FedRAMP, security, or compliance-related feature.
+        Please provide enough detail for a single developer to complete this within one sprint.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Short description of the change and its goal.
+      placeholder: "Shorten token lifetimes for FedRAMP environments"
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: Background / FedRAMP Concern
+      description: Which finding(s) or FedRAMP area(s) does this address? Reference the roadmap where possible.
+      placeholder: |
+        - Finding: Identity & Access Management (IAM) Hardening
+        - FedRAMP Areas: AC-2, AC-6, IA-2, IA-5
+        - Context from TempBacklog/EShop FedRAMP Compliance Features.md (e.g., F1)
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected_areas
+    attributes:
+      label: Affected Areas
+      description: Code areas or services likely impacted by this work.
+      placeholder: |
+        - src/Identity.API
+        - src/WebApp
+        - src/eShop.AppHost/Program.cs
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria (Gherkin)
+      description: Use Given/When/Then scenarios. At least one scenario is required.
+      placeholder: |
+        Scenario: FedRAMP token lifetimes are configuration-driven
+          Given a FedRAMP environment configuration is enabled
+          When Identity.API issues tokens
+          Then access and refresh token lifetimes match the configured FedRAMP values
+
+        Scenario: WebApp session timeout aligns with IAM policy
+          Given a user signs in via WebApp in a FedRAMP environment
+          When the configured idle timeout is exceeded
+          Then the user session is terminated and a re-login is required
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation_notes
+    attributes:
+      label: Implementation Notes (optional)
+      description: Any technical notes, spikes, or assumptions for the implementer.
+      placeholder: |
+        - Consider feature-flagging changes for gradual rollout.
+        - Coordinate with security/compliance on control mapping.
+    validations:
+      required: false
+
+  - type: textarea
+    id: links
+    attributes:
+      label: Related Links
+      description: Links to docs, PRDs, architecture diagrams, SSP sections, or backlog items.
+      placeholder: |
+        - TempBacklog/EShop FedRAMP Compliance Features.md (e.g., F1, F2)
+        - Onboarding/architect.md
+        - FedRAMP SSP section reference (if applicable)
+    validations:
+      required: false
