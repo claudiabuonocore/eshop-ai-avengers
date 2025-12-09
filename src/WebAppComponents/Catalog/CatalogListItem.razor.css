@@ -39,6 +39,12 @@
     text-align: left;
 }
 
+.catalog-product-content .name ::deep .search-highlight {
+    background-color: #fff3cd;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
 .catalog-product-content .price {
     color: #444;
     text-align: right;

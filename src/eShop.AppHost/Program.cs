@@ -81,7 +81,7 @@ if (useOpenAI)
     builder.AddOpenAI(catalogApi, webApp, OpenAITarget.OpenAI); // set to AzureOpenAI if you want to use Azure OpenAI
 }
 
-bool useOllama = false;
+bool useOllama = true;
 if (useOllama)
 {
     builder.AddOllama(catalogApi, webApp);

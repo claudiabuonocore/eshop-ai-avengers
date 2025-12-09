@@ -6,8 +6,36 @@
     <div class="catalog-search">
         <div class="catalog-search-header">
             <img role="presentation" src="icons/filters.svg" />
-            Filters
+            Search & Filters
         </div>
+        
+        <div class="search-input-group">
+            <form method="get" action="/" class="search-form">
+                @* Preserve existing filter parameters *@
+                @if (BrandId.HasValue)
+                {
+                    <input type="hidden" name="brand" value="@BrandId" />
+                }
+                @if (ItemTypeId.HasValue)
+                {
+                    <input type="hidden" name="type" value="@ItemTypeId" />
+                }
+                <div class="search-input-wrapper">
+                    <input type="text" 
+                           name="q" 
+                           placeholder="Search products..." 
+                           value="@SearchTerm"
+                           class="search-input"
+                           maxlength="200" />
+                    @if (!string.IsNullOrWhiteSpace(SearchTerm))
+                    {
+                        <a href="@ClearSearchUri()" class="search-clear-btn" title="Clear search">×</a>
+                    }
+                </div>
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+        </div>
+
         <div class="catalog-search-types">
             <div class="catalog-search-group">
                 <h3>Brand</h3>
@@ -49,8 +77,10 @@
 @code {
     IEnumerable<CatalogBrand>? catalogBrands;
     IEnumerable<CatalogItemType>? catalogItemTypes;
+    
     [Parameter] public int? BrandId { get; set; }
     [Parameter] public int? ItemTypeId { get; set; }
+    [Parameter] public string? SearchTerm { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,11 +95,21 @@
     {
         { "page", null },
         { "brand", brandId },
+        { "q", SearchTerm },
     });
 
     private string TypeUri(int? typeId) => Nav.GetUriWithQueryParameters(new Dictionary<string, object?>()
     {
         { "page", null },
         { "type", typeId },
+        { "q", SearchTerm },
+    });
+
+    private string ClearSearchUri() => Nav.GetUriWithQueryParameters(new Dictionary<string, object?>()
+    {
+        { "page", null },
+        { "brand", BrandId },
+        { "type", ItemTypeId },
+        { "q", null },
     });
 }
