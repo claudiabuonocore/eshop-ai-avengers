@@ -5,6 +5,7 @@ global using Microsoft.EntityFrameworkCore;
 global using eShop.EventBus.Abstractions;
 global using eShop.EventBus.Events;
 global using eShop.ServiceDefaults;
+global using eShop.Shared;
 global using Webhooks.API.Infrastructure;
 global using Webhooks.API.IntegrationEvents;
 global using Webhooks.API.Model;

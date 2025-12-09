@@ -41,6 +41,7 @@ global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
 global using Polly;
 global using eShop.ServiceDefaults;
+global using eShop.Shared;
 
 
 

@@ -4,10 +4,15 @@ namespace eShop.Ordering.Domain.AggregatesModel.OrderAggregate;
 
 public class Address : ValueObject
 {
+    [SensitiveData(DataClassification.PII, Notes = "Street address")]
     public string Street { get; private set; }
+    [SensitiveData(DataClassification.PII, Notes = "City")]
     public string City { get; private set; }
+    [SensitiveData(DataClassification.PII, Notes = "State or province")]
     public string State { get; private set; }
+    [SensitiveData(DataClassification.PII, Notes = "Country")]
     public string Country { get; private set; }
+    [SensitiveData(DataClassification.PII, Notes = "Postal/ZIP code")]
     public string ZipCode { get; private set; }
 
     public Address() { }
