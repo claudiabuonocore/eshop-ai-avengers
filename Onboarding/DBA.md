@@ -26,13 +26,17 @@ Each microservice owns its database schema, ensuring:
 - **Technology flexibility**: Services can evolve database technology independently
 - **Fault isolation**: Database failure in one service doesn't affect others
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Catalog.API│     │ Ordering.API│     │ Identity.API│     │  Basket.API │
-│             │     │             │     │             │     │             │
-│   [PG DB]   │     │   [PG DB]   │     │   [PG DB]   │     │  [Redis]    │
-│ catalogdb   │     │ orderingdb  │     │ identitydb  │     │             │
-└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
+```mermaid
+flowchart LR
+    C[Catalog.API PostgreSQL: catalogdb]
+    O[Ordering.API PostgreSQL: orderingdb]
+    I[Identity.API PostgreSQL: identitydb]
+    B[Basket.API Redis]
+
+    C -. owns .-> C
+    O -. owns .-> O
+    I -. owns .-> I
+    B -. owns .-> B
 ```
 
 ---

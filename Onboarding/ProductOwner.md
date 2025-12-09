@@ -58,34 +58,24 @@
 
 The solution implements a **microservices architecture** orchestrated by **.NET Aspire**, consisting of:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    .NET Aspire AppHost                      │
-│              (Orchestration & Service Discovery)            │
-└─────────────────────────────────────────────────────────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        │                   │                   │
-   ┌────▼────┐       ┌──────▼──────┐     ┌─────▼─────┐
-   │  WebApp │       │   APIs      │     │ Processors │
-   │ (Blazor)│       │             │     │ (Workers)  │
-   └─────────┘       └─────────────┘     └───────────┘
-        │                   │                   │
-        │            ┌──────┴──────┐           │
-        │            │             │           │
-   ┌────▼────┐  ┌───▼────┐   ┌────▼────┐ ┌───▼────┐
-   │Identity │  │Catalog │   │Ordering │ │Payment │
-   │   API   │  │  API   │   │   API   │ │Processor│
-   └─────────┘  └────────┘   └─────────┘ └────────┘
-        │            │            │            │
-        └────────────┴────────────┴────────────┘
-                     │
-        ┌────────────┴────────────┐
-        │                         │
-   ┌────▼────┐              ┌─────▼─────┐
-   │PostgreSQL│              │ RabbitMQ  │
-   │ (Storage)│              │(Event Bus)│
-   └──────────┘              └───────────┘
+```mermaid
+flowchart TD
+    A[.NET Aspire AppHost\n(Orchestration & Service Discovery)]
+
+    A --> W[WebApp (Blazor)]
+    A --> APIs[APIs]
+    A --> P[Processors (Workers)]
+
+    APIs --> I[Identity API]
+    APIs --> C[Catalog API]
+    APIs --> O[Ordering API]
+    P --> Pay[Payment Processor]
+
+    I --> DB[(PostgreSQL)]
+    C --> DB
+    O --> DB
+    P --> MQ[(RabbitMQ Event Bus)]
+    O --> MQ
 ```
 
 ### Key Components
@@ -244,8 +234,11 @@ Services communicate asynchronously via RabbitMQ:
 - **Publish-Subscribe**: Decoupled service interactions
 
 **Example Event Flow:**
-```
-Order Created → Stock Confirmed → Payment Processed → Order Shipped
+```mermaid
+flowchart LR
+   A[Order Created] --> B[Stock Confirmed]
+   B --> C[Payment Processed]
+   C --> D[Order Shipped]
 ```
 
 ### 3. **Domain-Driven Design (DDD)**
@@ -321,51 +314,37 @@ Shared cross-cutting concerns via `eShop.ServiceDefaults`:
 
 ### Order Creation Flow
 
-```
-1. WebApp (User) 
-   → POST /api/orders (Ordering API)
-
-2. Ordering API
-   → Validates request
-   → Creates Order aggregate (DDD)
-   → Saves to OrderingDB
-   → Publishes OrderStartedIntegrationEvent (RabbitMQ)
-
-3. OrderProcessor (Subscriber)
-   → Receives OrderStartedIntegrationEvent
-   → Validates stock availability
-   → Publishes OrderStockConfirmedIntegrationEvent
-
-4. PaymentProcessor (Subscriber)
-   → Receives OrderStockConfirmedIntegrationEvent
-   → Processes payment
-   → Publishes OrderPaymentSucceededIntegrationEvent
-
-5. Ordering API (Subscriber)
-   → Receives OrderPaymentSucceededIntegrationEvent
-   → Updates order status to "Paid"
-   → Publishes OrderStatusChangedToPaidIntegrationEvent
-
-6. Webhooks API (Subscriber)
-   → Receives OrderStatusChangedToPaidIntegrationEvent
-   → Finds matching subscriptions
-   → Delivers webhooks to registered endpoints
+```mermaid
+flowchart LR
+    U[WebApp (User)] --> OA[Ordering API]
+    OA -->|POST /api/orders| OA
+    OA --> V[Validate request]
+    V --> AGG[Create Order aggregate (DDD)]
+    AGG --> DB[Save to OrderingDB]
+    DB --> E1[Publish OrderStartedIntegrationEvent]
+    E1 --> OP[OrderProcessor]
+    OP --> SC[Validate stock]
+    SC --> E2[Publish OrderStockConfirmedIntegrationEvent]
+    E2 --> PP[PaymentProcessor]
+    PP --> PAY[Process payment]
+    PAY --> E3[Publish OrderPaymentSucceededIntegrationEvent]
+    E3 --> OA2[Ordering API]
+    OA2 --> S[Update status to "Paid"]
+    S --> E4[Publish OrderStatusChangedToPaidIntegrationEvent]
+    E4 --> WH[Webhooks API]
+    WH --> D[Deliver webhooks to subscribers]
 ```
 
 ### Basket Update Flow
 
-```
-1. WebApp
-   → gRPC call to Basket API (AddItem)
-
-2. Basket API
-   → Retrieves basket from Redis (user-specific key)
-   → Updates basket items
-   → Saves back to Redis
-   → Returns updated basket
-
-3. WebApp
-   → Updates UI in real-time
+```mermaid
+flowchart LR
+    W2[WebApp] -->|gRPC AddItem| BAPI[Basket API]
+    BAPI --> R1[Get basket from Redis]
+    R1 --> U1[Update basket items]
+    U1 --> R2[Save basket to Redis]
+    R2 --> RB[Return updated basket]
+    RB --> UI[Update UI in real-time]
 ```
 
 ---
@@ -401,8 +380,9 @@ Shared cross-cutting concerns via `eShop.ServiceDefaults`:
 - **PostgreSQL, Redis, RabbitMQ**: Containerized locally
 
 ### Environments Pattern
-```
-Development → Staging → Production
+```mermaid
+flowchart LR
+   Dev[Development] --> Stg[Staging] --> Prod[Production]
 ```
 
 ### Cloud Deployment Options
