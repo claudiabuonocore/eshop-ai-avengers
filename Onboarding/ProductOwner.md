@@ -60,22 +60,22 @@ The solution implements a **microservices architecture** orchestrated by **.NET 
 
 ```mermaid
 flowchart TD
-    A[.NET Aspire AppHost\n(Orchestration & Service Discovery)]
+   A[.NET Aspire AppHost - orchestration and service discovery]
 
-    A --> W[WebApp (Blazor)]
-    A --> APIs[APIs]
-    A --> P[Processors (Workers)]
+   A --> W[WebApp Blazor]
+   A --> APIs[APIs]
+   A --> P[Processors workers]
 
-    APIs --> I[Identity API]
-    APIs --> C[Catalog API]
-    APIs --> O[Ordering API]
-    P --> Pay[Payment Processor]
+   APIs --> I[Identity API]
+   APIs --> C[Catalog API]
+   APIs --> O[Ordering API]
+   P --> Pay[Payment Processor]
 
-    I --> DB[(PostgreSQL)]
-    C --> DB
-    O --> DB
-    P --> MQ[(RabbitMQ Event Bus)]
-    O --> MQ
+   I --> DB[PostgreSQL]
+   C --> DB
+   O --> DB
+   P --> MQ[RabbitMQ Event Bus]
+   O --> MQ
 ```
 
 ### Key Components
@@ -319,7 +319,7 @@ flowchart LR
     U[WebApp (User)] --> OA[Ordering API]
     OA -->|POST /api/orders| OA
     OA --> V[Validate request]
-    V --> AGG[Create Order aggregate (DDD)]
+   V --> AGG[Create Order aggregate DDD]
     AGG --> DB[Save to OrderingDB]
     DB --> E1[Publish OrderStartedIntegrationEvent]
     E1 --> OP[OrderProcessor]
@@ -329,7 +329,7 @@ flowchart LR
     PP --> PAY[Process payment]
     PAY --> E3[Publish OrderPaymentSucceededIntegrationEvent]
     E3 --> OA2[Ordering API]
-    OA2 --> S[Update status to "Paid"]
+   OA2 --> S[Update status to Paid]
     S --> E4[Publish OrderStatusChangedToPaidIntegrationEvent]
     E4 --> WH[Webhooks API]
     WH --> D[Deliver webhooks to subscribers]
