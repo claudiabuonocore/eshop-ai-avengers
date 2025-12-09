@@ -81,6 +81,52 @@
     color: #FFF;
 }
 
+.catalog-results {
+    flex-grow: 1;
+}
+
+.search-results-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.search-results-count {
+    font-size: 1rem;
+    color: #666;
+}
+
+.search-results-count strong {
+    color: #000;
+}
+
+.no-results {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #f9f9f9;
+    border-radius: 0.5rem;
+}
+
+.no-results h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.no-results p {
+    margin: 0.5rem 0;
+    color: #666;
+}
+
+.no-results a {
+    color: #000;
+    text-decoration: underline;
+}
+
+.no-results a:hover {
+    text-decoration: none;
+}
+
 .catalog .catalog-items {
     display: flex;
     align-items: flex-start;
