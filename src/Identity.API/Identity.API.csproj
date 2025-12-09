@@ -54,5 +54,6 @@
     <Compile Include="..\Shared\MigrateDbContextExtensions.cs" Link="Extensions\MigrateDbContextExtensions.cs" />
     <Compile Include="..\Shared\ActivityExtensions.cs" Link="Extensions\ActivityExtensions.cs" />
     <Compile Include="..\Shared\SensitiveDataAttribute.cs" Link="Attributes\SensitiveDataAttribute.cs" />
+    <Compile Include="..\Shared\SensitiveDataLogger.cs" Link="Logging\SensitiveDataLogger.cs" />
   </ItemGroup>
 </Project>

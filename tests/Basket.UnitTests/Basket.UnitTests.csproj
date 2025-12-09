@@ -22,4 +22,9 @@
     <ProjectReference Include="..\..\src\Basket.API\Basket.API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\src\Shared\SensitiveDataAttribute.cs" Link="Shared\SensitiveDataAttribute.cs" />
+    <Compile Include="..\..\src\Shared\SensitiveDataLogger.cs" Link="Shared\SensitiveDataLogger.cs" />
+  </ItemGroup>
+
 </Project>
