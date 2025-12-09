@@ -1,8 +1,11 @@
 using eShop.Reviews.API.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using eShop.Reviews.API;
+using eShop.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 
 // Configure DbContext
 builder.Services.AddDbContext<ReviewsDbContext>(options =>
@@ -34,7 +37,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-app.MapHealthChecks("/health");
+app.MapDefaultEndpoints();
 app.MapControllers();
 // Swagger disabled in tests to avoid type load issues
 

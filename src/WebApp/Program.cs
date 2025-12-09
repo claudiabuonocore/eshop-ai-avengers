@@ -10,14 +10,10 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.AddApplicationServices();
 
 // Reviews API typed client
-var reviewsApiUrl = builder.Configuration["ReviewsApiUrl"]
-    ?? Environment.GetEnvironmentVariable("REVIEWS_API_URL")
-    ?? "http://reviews-api";
-builder.Services.AddHttpClient<eShop.WebApp.Services.ReviewService>(client =>
+builder.Services.AddHttpClient<eShop.WebApp.Services.IReviewService, eShop.WebApp.Services.ReviewService>(client =>
 {
-    client.BaseAddress = new Uri(reviewsApiUrl);
+    client.BaseAddress = new Uri("https+http://reviews-api");
 });
-builder.Services.AddScoped<eShop.WebApp.Services.IReviewService, eShop.WebApp.Services.ReviewService>();
 
 var app = builder.Build();
 

@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="../eShop.ServiceDefaults/eShop.ServiceDefaults.csproj" />
     <ProjectReference Include="../Shared/Reviews/Shared.Reviews.csproj" Condition="Exists('../Shared/Reviews/Shared.Reviews.csproj')" />
   </ItemGroup>
 
