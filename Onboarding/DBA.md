@@ -28,15 +28,10 @@ Each microservice owns its database schema, ensuring:
 
 ```mermaid
 flowchart LR
-    C[Catalog.API PostgreSQL: catalogdb]
-    O[Ordering.API PostgreSQL: orderingdb]
-    I[Identity.API PostgreSQL: identitydb]
-    B[Basket.API Redis]
-
-    C -. owns .-> C
-    O -. owns .-> O
-    I -. owns .-> I
-    B -. owns .-> B
+    C[Catalog.API - PostgreSQL catalogdb]
+    O[Ordering.API - PostgreSQL orderingdb]
+    I[Identity.API - PostgreSQL identitydb]
+    B[Basket.API - Redis]
 ```
 
 ---
