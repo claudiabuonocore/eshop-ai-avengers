@@ -525,7 +525,7 @@ Order Shipped → Ordering.API
     ↓
 OrderShippedDomainEvent raised
     ↓
-OrderShippedIntegrationEvent published to RabbitMQ
+OrderStatusChangedToShippedIntegrationEvent published to RabbitMQ
     ↓
 Catalog.API subscribes and handles event
     ↓
@@ -536,27 +536,158 @@ Schedule delayed ReviewRequestIntegrationEvent (7 days)
 Email service sends review request to customer
 ```
 
-**Implementation:**
+### Integration Event Schema Extension Plan
 
+**Issue:** The existing `OrderStatusChangedToShippedIntegrationEvent` lacks the required properties for verified purchase tracking. Current event has only: `OrderId`, `OrderStatus`, `BuyerName`, `BuyerIdentityGuid`. We need to add: `BuyerEmail` and `OrderItems` collection.
+
+**Impact:** This is a breaking change to the integration event contract, affecting all subscribers (WebApp, Webhooks.API).
+
+**Required Changes:**
+
+**Step 1: Extend Integration Event (Ordering.API)**
 ```csharp
-// Location: src/Catalog.API/IntegrationEvents/OrderShippedIntegrationEventHandler.cs
+// Location: src/Ordering.API/Application/IntegrationEvents/Events/OrderStatusChangedToShippedIntegrationEvent.cs
 
-public class OrderShippedIntegrationEventHandler : IIntegrationEventHandler<OrderShippedIntegrationEvent>
+public record OrderStatusChangedToShippedIntegrationEvent : IntegrationEvent
+{
+    public int OrderId { get; }
+    public OrderStatus OrderStatus { get; }
+    public string BuyerName { get; }
+    public string BuyerIdentityGuid { get; }
+    
+    // NEW: Add buyer email for review notifications
+    public string BuyerEmail { get; }
+    
+    // NEW: Add order items for verified purchase tracking
+    public IReadOnlyCollection<OrderItemInfo> OrderItems { get; }
+
+    public OrderStatusChangedToShippedIntegrationEvent(
+        int orderId, 
+        OrderStatus orderStatus, 
+        string buyerName, 
+        string buyerIdentityGuid,
+        string buyerEmail,
+        IEnumerable<OrderItemInfo> orderItems)
+    {
+        OrderId = orderId;
+        OrderStatus = orderStatus;
+        BuyerName = buyerName;
+        BuyerIdentityGuid = buyerIdentityGuid;
+        BuyerEmail = buyerEmail;
+        OrderItems = orderItems.ToList().AsReadOnly();
+    }
+}
+
+// NEW: DTO for order item information in integration events
+public record OrderItemInfo(int ProductId, string ProductName, int Units, decimal UnitPrice);
+```
+
+**Step 2: Update Domain Event Handler (Ordering.API)**
+```csharp
+// Location: src/Ordering.API/Application/DomainEventHandlers/OrderShippedDomainEventHandler.cs
+
+public class OrderShippedDomainEventHandler : INotificationHandler<OrderShippedDomainEvent>
+{
+    private readonly IOrderRepository _orderRepository;
+    private readonly IBuyerRepository _buyerRepository;
+    private readonly IIntegrationEventLogService _integrationEventLogService;
+    private readonly ILogger<OrderShippedDomainEventHandler> _logger;
+
+    public async Task Handle(OrderShippedDomainEvent domainEvent, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Order {OrderId} shipped", domainEvent.Order.Id);
+
+        // Fetch full order with items
+        var order = await _orderRepository.GetAsync(domainEvent.Order.Id);
+        var buyer = await _buyerRepository.FindByIdAsync(order.GetBuyerId.Value);
+
+        // UPDATED: Include email and order items in integration event
+        var orderItems = order.OrderItems.Select(item => new OrderItemInfo(
+            item.ProductId,
+            item.GetProductName(),
+            item.GetUnits(),
+            item.GetUnitPrice()
+        )).ToList();
+
+        var integrationEvent = new OrderStatusChangedToShippedIntegrationEvent(
+            order.Id,
+            order.OrderStatus,
+            buyer.Name,
+            buyer.IdentityGuid,
+            buyer.Email,  // NEW: Add email
+            orderItems    // NEW: Add order items
+        );
+
+        await _integrationEventLogService.AddAndSaveEventAsync(integrationEvent);
+    }
+}
+```
+
+**Step 3: Verify Buyer Entity Has Email (Ordering.Domain)**
+```csharp
+// Location: src/Ordering.Domain/AggregatesModel/BuyerAggregate/Buyer.cs
+
+// Verify the Buyer entity has an Email property. If not, add:
+public class Buyer : Entity, IAggregateRoot
+{
+    public string IdentityGuid { get; private set; }
+    public string Name { get; private set; }
+    
+    // ADD IF MISSING:
+    public string Email { get; private set; }
+    
+    // Update constructor to include email if necessary
+}
+```
+
+**Step 4: Create Integration Event Handler (Catalog.API)**
+```csharp
+// Location: src/Catalog.API/IntegrationEvents/OrderStatusChangedToShippedIntegrationEventHandler.cs
+
+public class OrderStatusChangedToShippedIntegrationEventHandler 
+    : IIntegrationEventHandler<OrderStatusChangedToShippedIntegrationEvent>
 {
     private readonly CatalogContext _context;
-    private readonly IEventBus _eventBus;
+    private readonly ILogger<OrderStatusChangedToShippedIntegrationEventHandler> _logger;
     
-    public async Task Handle(OrderShippedIntegrationEvent @event)
+    public OrderStatusChangedToShippedIntegrationEventHandler(
+        CatalogContext context,
+        ILogger<OrderStatusChangedToShippedIntegrationEventHandler> logger)
     {
+        _context = context;
+        _logger = logger;
+    }
+    
+    public async Task Handle(OrderStatusChangedToShippedIntegrationEvent @event)
+    {
+        _logger.LogInformation(
+            "Handling order shipped event for Order {OrderId} with {ItemCount} items",
+            @event.OrderId, 
+            @event.OrderItems.Count);
+        
         // Store verified purchase records for all items in the order
         foreach (var orderItem in @event.OrderItems)
         {
+            // Check if product exists in catalog
+            var productExists = await _context.CatalogItems
+                .AnyAsync(p => p.Id == orderItem.ProductId);
+            
+            if (!productExists)
+            {
+                _logger.LogWarning(
+                    "Product {ProductId} from Order {OrderId} not found in catalog",
+                    orderItem.ProductId,
+                    @event.OrderId);
+                continue;
+            }
+            
             var verifiedPurchase = new VerifiedPurchase
             {
-                UserId = @event.BuyerId,
+                UserId = @event.BuyerIdentityGuid,
                 OrderId = @event.OrderId,
                 ProductId = orderItem.ProductId,
-                ShipDate = DateTime.UtcNow
+                ShipDate = DateTime.UtcNow,
+                ReviewSubmitted = false
             };
             
             _context.VerifiedPurchase.Add(verifiedPurchase);
@@ -564,21 +695,58 @@ public class OrderShippedIntegrationEventHandler : IIntegrationEventHandler<Orde
         
         await _context.SaveChangesAsync();
         
-        // Schedule review request (implementation depends on delayed messaging support)
-        var reviewRequestEvent = new ReviewRequestIntegrationEvent(
-            @event.BuyerId,
-            @event.OrderId,
-            @event.OrderItems.Select(i => i.ProductId).ToArray(),
-            @event.BuyerEmail
-        );
+        _logger.LogInformation(
+            "Stored {Count} verified purchase records for Order {OrderId}",
+            @event.OrderItems.Count,
+            @event.OrderId);
         
-        // Option 1: Use RabbitMQ delayed plugin or scheduler
-        // Option 2: Use Azure Service Bus scheduled messages
-        // Option 3: Use Hangfire/Quartz for delayed job
-        await _eventBus.PublishDelayed(reviewRequestEvent, TimeSpan.FromDays(7));
+        // TODO: Implement delayed review request (see delayed messaging section)
+        // For now, we just track the verified purchase
     }
 }
 ```
+
+**Step 5: Register Event Handler (Catalog.API)**
+```csharp
+// Location: src/Catalog.API/Program.cs
+
+// Add to event bus subscription section:
+eventBus.Subscribe<OrderStatusChangedToShippedIntegrationEvent, 
+                   OrderStatusChangedToShippedIntegrationEventHandler>();
+```
+
+**Step 6: Update Existing Subscribers**
+
+Check if these services consume the event and update handlers if needed:
+- `src/WebApp/Application/IntegrationEvents/` - Update any handlers
+- `src/Webhooks.API/IntegrationEvents/` - Update any handlers
+
+Most existing handlers likely only use `OrderId` and `BuyerName`, so they should continue working (backward compatible addition of new properties).
+
+**Deployment Strategy:**
+1. Deploy updated Ordering.API with extended event schema
+2. Deploy Catalog.API with new handler
+3. Update any other subscribers
+4. Existing events in flight will fail gracefully if old schema - acceptable for non-critical review feature
+
+**Estimated Effort:** 4-6 hours
+- Event schema extension: 30 minutes
+- Domain event handler update: 1 hour
+- Buyer entity verification/update: 30 minutes
+- Integration event handler implementation: 2 hours
+- Testing and validation: 1-2 hours
+
+**Alternative Approach (If Breaking Change Unacceptable):**
+
+If modifying the existing event is too risky, create a new event:
+```csharp
+public record OrderShippedWithDetailsIntegrationEvent : IntegrationEvent
+{
+    // Include all required properties from the start
+}
+```
+
+Publish both events from the domain event handler during transition period, then deprecate old event after migration complete. This doubles the effort but provides zero-downtime migration.
 
 ## Performance Considerations
 
