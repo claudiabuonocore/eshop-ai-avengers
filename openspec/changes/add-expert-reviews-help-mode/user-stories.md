@@ -31,11 +31,11 @@
 - Performance optimizations (can handle low initial volume)
 - Review moderation queue (handle reports manually initially)
 
----
+--- 
 
 ## Feature Epics
 
-## Epic 1: Customer Review Submission
+## Epic 1:
 
 ### US-1.1: Submit Product Review (MVP)
 **As a** logged-in customer  

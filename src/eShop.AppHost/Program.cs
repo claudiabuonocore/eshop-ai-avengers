@@ -16,6 +16,7 @@ var catalogDb = postgres.AddDatabase("catalogdb");
 var identityDb = postgres.AddDatabase("identitydb");
 var orderDb = postgres.AddDatabase("orderingdb");
 var webhooksDb = postgres.AddDatabase("webhooksdb");
+var reviewsDb = postgres.AddDatabase("reviewsdb");
 
 var launchProfileName = ShouldUseHttpForEndpoints() ? "http" : "https";
 
@@ -41,6 +42,11 @@ var orderingApi = builder.AddProject<Projects.Ordering_API>("ordering-api")
     .WithReference(orderDb).WaitFor(orderDb)
     .WithHttpHealthCheck("/health")
     .WithEnvironment("Identity__Url", identityEndpoint);
+
+var reviewsApi = builder.AddProject<Projects.Reviews_API>("reviews-api")
+    .WithExternalHttpEndpoints()
+    .WithReference(reviewsDb)
+    .WithHttpHealthCheck("/health");
 
 builder.AddProject<Projects.OrderProcessor>("order-processor")
     .WithReference(rabbitMq).WaitFor(rabbitMq)
@@ -72,7 +78,9 @@ var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
     .WithReference(catalogApi)
     .WithReference(orderingApi)
     .WithReference(rabbitMq).WaitFor(rabbitMq)
-    .WithEnvironment("IdentityUrl", identityEndpoint);
+    .WithReference(reviewsApi)
+    .WithEnvironment("IdentityUrl", identityEndpoint)
+    .WaitFor(reviewsApi);
 
 // set to true if you want to use OpenAI
 bool useOpenAI = false;

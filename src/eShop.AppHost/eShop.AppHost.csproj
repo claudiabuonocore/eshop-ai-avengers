@@ -27,6 +27,7 @@
     <ProjectReference Include="..\Webhooks.API\Webhooks.API.csproj" />
     <ProjectReference Include="..\WebApp\WebApp.csproj" />
     <ProjectReference Include="..\WebhookClient\WebhookClient.csproj" />
+    <ProjectReference Include="..\Reviews.API\Reviews.API.csproj" />
   </ItemGroup>
 
 </Project>

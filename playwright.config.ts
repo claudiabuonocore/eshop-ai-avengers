@@ -37,7 +37,7 @@ export default defineConfig({
     },
     {
       name: 'e2e tests logged in',
-      testMatch: ['**/AddItemTest.spec.ts', '**/RemoveItemTest.spec.ts'],
+      testMatch: ['**/AddItemTest.spec.ts', '**/RemoveItemTest.spec.ts', '**/ReviewsTest.spec.ts'],
       dependencies: ['setup'],
       use: {
         storageState: STORAGE_STATE,
@@ -45,7 +45,7 @@ export default defineConfig({
     },
     {
       name: 'e2e tests without logged in',
-      testMatch: ['**/BrowseItemTest.spec.ts'],
+      testMatch: ['**/BrowseItemTest.spec.ts', '**/ReviewsTest.spec.ts'],
     }
     // {
     //   name: 'chromium',
@@ -90,6 +90,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     stderr: 'pipe',
     stdout: 'pipe',
-    timeout: process.env.CI ? (5 * 60_000) : 60_000,
+    timeout: process.env.CI ? (5 * 60_000) : 120_000,
+    ignoreHTTPSErrors: true,
   },
 });

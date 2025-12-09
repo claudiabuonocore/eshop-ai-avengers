@@ -4,6 +4,8 @@
 @inject BasketState BasketState
 @inject NavigationManager Nav
 @inject IProductImageUrlProvider ProductImages
+@inject eShop.WebApp.Services.IReviewService Reviews
+@using eShop.Shared.Reviews
 
 @if (item is not null)
 {
@@ -51,6 +53,65 @@
             }
         </div>
     </div>
+
+    <div class="reviews">
+        <h3>Customer Reviews</h3>
+        @if (aggregate is not null)
+        {
+            <p>
+                Average rating: <strong>@aggregate.AverageRating.ToString("0.0")</strong>
+                (<strong>@aggregate.ReviewCount</strong> reviews)
+            </p>
+        }
+
+        @if (reviews is { Count: > 0 })
+        {
+            <ul>
+                @foreach (var r in reviews)
+                {
+                    <li>
+                        <strong>@r.Rating/5</strong> — <em>@r.Title</em>
+                        <div>@r.Content</div>
+                        <small>by @r.UserId on @r.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</small>
+                    </li>
+                }
+            </ul>
+            <div class="pagination">
+                <button disabled="@(_page<=1)" @onclick="PrevPage">Prev</button>
+                <span>Page @_page</span>
+                <button disabled="@(_page*_pageSize>=_totalCount)" @onclick="NextPage">Next</button>
+            </div>
+        }
+        else
+        {
+            <p>No reviews yet.</p>
+        }
+
+        @if (isLoggedIn)
+        {
+            <h4>Write a review</h4>
+            <EditForm Model="submitModel" OnValidSubmit="SubmitReviewAsync">
+                <DataAnnotationsValidator />
+                <div>
+                    <label>Rating (1-5)</label>
+                    <InputNumber @bind-Value="submitModel.Rating" />
+                </div>
+                <div>
+                    <label>Title</label>
+                    <InputText @bind-Value="submitModel.Title" />
+                </div>
+                <div>
+                    <label>Content</label>
+                    <InputTextArea @bind-Value="submitModel.Content" />
+                </div>
+                <button type="submit">Submit Review</button>
+            </EditForm>
+        }
+        else
+        {
+            <p><a href="@Pages.User.LogIn.Url(Nav)">Log in</a> to write a review.</p>
+        }
+    </div>
 }
 else if (notFound)
 {
@@ -65,6 +126,12 @@ else if (notFound)
     private int numInCart;
     private bool isLoggedIn;
     private bool notFound;
+    private ReviewAggregateDto? aggregate;
+    private List<ReviewItemDto> reviews = new();
+    private int _page = 1;
+    private int _pageSize = 10;
+    private int _totalCount = 0;
+    private SubmitReviewRequest submitModel = new();
 
     [Parameter]
     public int ItemId { get; set; }
@@ -79,6 +146,9 @@ else if (notFound)
             isLoggedIn = HttpContext?.User.Identity?.IsAuthenticated == true;
             item = await CatalogService.GetCatalogItem(ItemId);
             await UpdateNumInCartAsync();
+            await LoadReviewsAsync();
+            await LoadAggregateAsync();
+            submitModel.ProductId = ItemId;
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
@@ -106,5 +176,51 @@ else if (notFound)
     {
         var items = await BasketState.GetBasketItemsAsync();
         numInCart = items.FirstOrDefault(row => row.ProductId == ItemId)?.Quantity ?? 0;
+    }
+
+    private async Task LoadAggregateAsync()
+    {
+        aggregate = await Reviews.GetAggregateAsync(ItemId);
+    }
+
+    private async Task LoadReviewsAsync()
+    {
+        var page = await Reviews.GetByProductAsync(ItemId, _page, _pageSize);
+        _totalCount = page.TotalCount;
+        reviews = page.Items.ToList();
+    }
+
+    private async Task PrevPage()
+    {
+        if (_page > 1)
+        {
+            _page--;
+            await LoadReviewsAsync();
+        }
+    }
+
+    private async Task NextPage()
+    {
+        if (_page * _pageSize < _totalCount)
+        {
+            _page++;
+            await LoadReviewsAsync();
+        }
+    }
+
+    private async Task SubmitReviewAsync()
+    {
+        var result = await Reviews.SubmitAsync(submitModel);
+        if (result is not null)
+        {
+            // Refresh lists and aggregate
+            await LoadAggregateAsync();
+            // Reset to first page to show the newest result
+            _page = 1;
+            await LoadReviewsAsync();
+            submitModel.Title = string.Empty;
+            submitModel.Content = string.Empty;
+            submitModel.Rating = 5;
+        }
     }
 }
