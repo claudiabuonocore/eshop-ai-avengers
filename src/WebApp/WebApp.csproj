@@ -31,4 +31,9 @@
     <Protobuf Include="..\Basket.API\Proto\basket.proto" GrpcServices="Client" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Shared\SensitiveDataAttribute.cs" Link="Attributes\SensitiveDataAttribute.cs" />
+    <Compile Include="..\Shared\SensitiveDataLogger.cs" Link="Logging\SensitiveDataLogger.cs" />
+  </ItemGroup>
+
 </Project>

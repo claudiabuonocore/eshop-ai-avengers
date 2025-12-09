@@ -1,4 +1,5 @@
 ﻿using eShop.EventBus.Events;
+using eShop.Shared;
 
 namespace eShop.WebApp.Services.OrderStatus.IntegrationEvents;
 
@@ -6,7 +7,11 @@ public record OrderStatusChangedToAwaitingValidationIntegrationEvent : Integrati
 {
     public int OrderId { get; }
     public string OrderStatus { get; }
+    
+    [SensitiveData(DataClassification.PII, Notes = "Buyer name")]
     public string BuyerName { get; }
+    
+    [SensitiveData(DataClassification.PII, Notes = "Buyer identity GUID")]
     public string BuyerIdentityGuid { get; }
 
     public OrderStatusChangedToAwaitingValidationIntegrationEvent(

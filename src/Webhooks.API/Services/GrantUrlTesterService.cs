@@ -14,7 +14,7 @@ class GrantUrlTesterService(IHttpClientFactory factory, ILogger<IGrantUrlTesterS
         var msg = new HttpRequestMessage(HttpMethod.Options, url);
         msg.Headers.Add("X-eshop-whtoken", token);
 
-        logger.LogInformation("Sending the OPTIONS message to {Url} with token \"{Token}\"", url, token ?? string.Empty);
+        logger.LogInformation("Sending the OPTIONS message to {Url} with token \"{Token}\"", url, "***REDACTED***");
 
         try
         {
@@ -22,7 +22,10 @@ class GrantUrlTesterService(IHttpClientFactory factory, ILogger<IGrantUrlTesterS
             var tokenReceived = response.Headers.TryGetValues("X-eshop-whtoken", out var tokenValues) ? tokenValues.FirstOrDefault() : null;
             var tokenExpected = string.IsNullOrWhiteSpace(token) ? null : token;
 
-            logger.LogInformation("Response code is {StatusCode} for url {Url} and token in header was {TokenReceived} (expected token was {TokenExpected})", response.StatusCode, url, tokenReceived, tokenExpected);
+            logger.LogInformation("Response code is {StatusCode} for url {Url} and token in header was {TokenReceived} (expected token was {TokenExpected})", 
+                response.StatusCode, url, 
+                tokenReceived != null ? "***REDACTED***" : "null", 
+                tokenExpected != null ? "***REDACTED***" : "null");
 
             return response.IsSuccessStatusCode && tokenReceived == tokenExpected;
         }
