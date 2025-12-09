@@ -147,9 +147,11 @@ public static class SensitiveDataLogger
     /// </summary>
     /// <param name="obj">The object to convert</param>
     /// <returns>A dictionary with sensitive data redacted</returns>
-    public static Dictionary<string, object> ToSafeDictionary(object obj)
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context
+    public static Dictionary<string, object?> ToSafeDictionary(object obj)
     {
-        var result = new Dictionary<string, object>();
+        var result = new Dictionary<string, object?>();
+#pragma warning restore CS8632
 
         if (obj == null)
         {
@@ -166,11 +168,15 @@ public static class SensitiveDataLogger
 
             if (sensitiveAttr != null)
             {
-                result[property.Name] = MaskValue(propertyValue ?? (object)"null", sensitiveAttr.Classification);
+                // For sensitive data, store the masked string representation
+                result[property.Name] = propertyValue != null 
+                    ? MaskValue(propertyValue, sensitiveAttr.Classification) 
+                    : null;
             }
             else
             {
-                result[property.Name] = propertyValue ?? (object)"null";
+                // For non-sensitive data, store the actual value (preserving nulls)
+                result[property.Name] = propertyValue;
             }
         }
 

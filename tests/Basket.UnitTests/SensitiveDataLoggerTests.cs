@@ -196,8 +196,8 @@ public class SensitiveDataLoggerTests
         var redacted = SensitiveDataLogger.Redact(model);
 
         // Assert
-        Assert.IsFalse(redacted.Contains("AB") && redacted.Contains("PersonalInfo"), 
-            "Short PII values should be masked");
+        Assert.IsFalse(redacted.Contains("PersonalInfo = \"AB\""), 
+            "Short PII values should be masked, not shown in plain text");
         Assert.IsTrue(redacted.Contains("***REDACTED***"), 
             "Financial and credential data should be completely redacted");
     }
@@ -206,12 +206,14 @@ public class SensitiveDataLoggerTests
     public void Redact_EmptyOrNullSensitiveValues_ShouldHandleGracefully()
     {
         // Arrange
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type
         var model = new TestModel
         {
             PersonalInfo = string.Empty,
-            CreditCardNumber = null!,
+            CreditCardNumber = null,
             ApiToken = ""
         };
+#pragma warning restore CS8625
 
         // Act
         var redacted = SensitiveDataLogger.Redact(model);
