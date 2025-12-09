@@ -1,1 +1,23 @@
-{}
+{
+    "sarif-viewer.connectToGithubCodeScanning": "off",
+    "github.copilot.chat.codeGeneration.instructions": [
+        {
+            "file": ".github/chatmodes/architect.md"
+        },
+        {
+            "file": ".github/chatmodes/dba.md"
+        },
+        {
+            "file": ".github/chatmodes/devops.md"
+        },
+        {
+            "file": ".github/chatmodes/engineer.md"
+        },
+        {
+            "file": ".github/chatmodes/product-owner.md"
+        },
+        {
+            "file": ".github/chatmodes/qe.md"
+        }
+    ]
+}
