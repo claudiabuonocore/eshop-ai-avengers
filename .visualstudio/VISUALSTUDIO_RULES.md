@@ -22,7 +22,10 @@ Operational
 
 Compliance
 - Redact secrets and PII from prompts and logs automatically.
+- Treat any fields or entities marked as confidential or regulated in the codebase's data classification as sensitive by default, including vector embeddings derived from such data. Do not emit these values into logs, test data, or AI prompts.
+- When suggesting or generating application logs, never include secrets, tokens, passwords, or raw PII (such as full names, emails, addresses, payment details, or full webhook payloads). Prefer structured logs that reference non-sensitive identifiers and outcomes and assume masking/redaction helpers are in place.
 - Log AI interactions with user, timestamp, prompt hash, and model used; store logs in an auditable, compliant store.
+ - When generating or modifying domain or data models, apply the existing data-classification scheme to all new fields and entities (for example, public / internal / confidential / regulated) and ensure central data-classification documentation is kept up to date.
 
 IDE workflow
 - Provide quick links in suggestions to relevant tests, related files, and documentation.
