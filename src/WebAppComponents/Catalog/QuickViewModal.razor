@@ -1,0 +1,102 @@
+@using eShop.WebAppComponents.Item
+@inject IProductImageUrlProvider ProductImages
+
+@*
+    QuickViewModal Component
+    Displays product details in a modal overlay without leaving the catalog page
+*@
+
+@if (IsVisible && Product != null)
+{
+    <div class="modal-backdrop" @onclick="Close">
+        <div class="modal-container" @onclick:stopPropagation>
+            <button class="modal-close" @onclick="Close" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            
+            <div class="modal-content">
+                <div class="modal-image">
+                    <img 
+                        src="@ProductImages.GetProductImageUrl(Product)" 
+                        alt="@Product.Name"
+                        loading="eager" />
+                </div>
+                
+                <div class="modal-details">
+                    <h2 class="modal-title">@Product.Name</h2>
+                    
+                    <div class="modal-price">
+                        <span class="price-amount">@($"${Product.Price:0.00}")</span>
+                    </div>
+                    
+                    @if (!string.IsNullOrWhiteSpace(Product.Description))
+                    {
+                        <div class="modal-description">
+                            <h3>Description</h3>
+                            <p>@Product.Description</p>
+                        </div>
+                    }
+                    
+                    @if (Product.AvailableStock > 0)
+                    {
+                        <div class="modal-stock">
+                            <span class="stock-badge in-stock">In Stock</span>
+                            <span class="stock-quantity">@Product.AvailableStock available</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="modal-stock">
+                            <span class="stock-badge out-of-stock">Out of Stock</span>
+                        </div>
+                    }
+                    
+                    <div class="modal-actions">
+                        <button class="add-to-cart-btn button-primary" @onclick="OnAddToCart" disabled="@(Product.AvailableStock <= 0)">
+                            @if (Product.AvailableStock > 0)
+                            {
+                                <text>Add to Cart</text>
+                            }
+                            else
+                            {
+                                <text>Out of Stock</text>
+                            }
+                        </button>
+                        
+                        <a href="@ItemHelper.Url(Product)" class="view-full-details button-outline">
+                            View Full Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+    
+    [Parameter]
+    public CatalogItem? Product { get; set; }
+    
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+    
+    [Parameter]
+    public EventCallback<CatalogItem> OnAddToCartRequested { get; set; }
+
+    private async Task Close()
+    {
+        await OnClose.InvokeAsync();
+    }
+
+    private async Task OnAddToCart()
+    {
+        if (Product != null && OnAddToCartRequested.HasDelegate)
+        {
+            await OnAddToCartRequested.InvokeAsync(Product);
+        }
+    }
+}
+

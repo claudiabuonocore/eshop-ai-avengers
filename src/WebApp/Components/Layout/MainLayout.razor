@@ -1,10 +1,14 @@
 ﻿@using eShop.WebApp.Components.Chatbot
 @inherits LayoutComponentBase
 
-<HeaderBar />
-@Body
-<ShowChatbotButton />
-<FooterBar />
+<div class="site-wrapper backcountry-theme">
+    <HeaderBar />
+    <main class="main-content">
+        @Body
+    </main>
+    <ShowChatbotButton />
+    <FooterBar />
+</div>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.

@@ -1,0 +1,41 @@
+@*
+    LoadingSkeleton Component
+    Displays an animated skeleton placeholder while content is loading
+*@
+
+<div class="skeleton @Type @SizeClass" style="@CustomStyle">
+    @if (Type == "product-card")
+    {
+        <div class="skeleton-image"></div>
+        <div class="skeleton-text-group">
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text short"></div>
+        </div>
+    }
+    else if (Type == "text")
+    {
+        <div class="skeleton-text"></div>
+    }
+    else if (Type == "image")
+    {
+        <div class="skeleton-image"></div>
+    }
+    else if (Type == "circle")
+    {
+        <div class="skeleton-circle"></div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Type { get; set; } = "text"; // text, image, circle, product-card
+    
+    [Parameter]
+    public string Size { get; set; } = "medium"; // small, medium, large
+    
+    [Parameter]
+    public string? CustomStyle { get; set; }
+    
+    private string SizeClass => $"skeleton-{Size}";
+}
+

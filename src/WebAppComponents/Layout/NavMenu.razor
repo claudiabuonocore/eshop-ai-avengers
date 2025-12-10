@@ -1,0 +1,147 @@
+@using eShop.WebAppComponents.Catalog
+@inject CatalogService CatalogService
+@inject NavigationManager Nav
+
+@*
+    NavMenu Component
+    Main navigation with category dropdowns and mobile hamburger menu
+    Backcountry-inspired design with clear hierarchy
+*@
+
+<nav class="nav-menu @(isExpanded ? "nav-expanded" : "")">
+    @* Mobile Hamburger Button *@
+    <button class="nav-toggle" @onclick="ToggleMobileMenu" aria-label="Toggle navigation menu">
+        <span class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </span>
+    </button>
+
+    @* Navigation Links *@
+    <div class="nav-links">
+        <a href="/" class="nav-link @(IsCurrentPage("/") ? "active" : "")">
+            All Gear
+        </a>
+        
+        <a href="/catalog?type=6" class="nav-link @(IsCurrentPage("/catalog", "type", "6") ? "active" : "")">
+            Jackets
+        </a>
+        
+        <a href="/catalog?type=1" class="nav-link @(IsCurrentPage("/catalog", "type", "1") ? "active" : "")">
+            Footwear
+        </a>
+        
+        <a href="/catalog?type=3" class="nav-link @(IsCurrentPage("/catalog", "type", "3") ? "active" : "")">
+            Ski/Snowboard
+        </a>
+        
+        <a href="/catalog?type=4" class="nav-link @(IsCurrentPage("/catalog", "type", "4") ? "active" : "")">
+            Bags
+        </a>
+        
+        <a href="/catalog?type=2" class="nav-link @(IsCurrentPage("/catalog", "type", "2") ? "active" : "")">
+            Climbing
+        </a>
+        
+        <a href="/catalog?type=8" class="nav-link @(IsCurrentPage("/catalog", "type", "8") ? "active" : "")">
+            Cycling
+        </a>
+        
+        <a href="/catalog?type=5" class="nav-link @(IsCurrentPage("/catalog", "type", "5") ? "active" : "")">
+            Trekking
+        </a>
+        
+        @if (catalogBrands != null && catalogBrands.Any())
+        {
+            @* Brands Dropdown *@
+            <div class="nav-dropdown" @onmouseenter="() => ShowBrandsDropdown(true)" @onmouseleave="() => ShowBrandsDropdown(false)">
+                <button class="nav-link dropdown-trigger" @onclick="ToggleBrandsDropdown">
+                    Brands
+                    <span class="dropdown-arrow">▾</span>
+                </button>
+                
+                @if (showBrandsDropdown || isExpanded)
+                {
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <h3 class="dropdown-heading">Shop by Brand</h3>
+                                @foreach (var brand in catalogBrands)
+                                {
+                                    <a href="@GetBrandUrl(brand.Id)" class="dropdown-item">
+                                        @brand.Brand
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</nav>
+
+@code {
+    private IEnumerable<CatalogItemType>? catalogTypes;
+    private IEnumerable<CatalogBrand>? catalogBrands;
+    private bool isExpanded = false;
+    private bool showBrandsDropdown = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var typesTask = CatalogService.GetTypes();
+        var brandsTask = CatalogService.GetBrands();
+        await Task.WhenAll(typesTask, brandsTask);
+        catalogTypes = typesTask.Result;
+        catalogBrands = brandsTask.Result;
+    }
+
+    private void ToggleMobileMenu()
+    {
+        isExpanded = !isExpanded;
+    }
+
+    private void ToggleBrandsDropdown()
+    {
+        // For mobile, toggle dropdown
+        showBrandsDropdown = !showBrandsDropdown;
+    }
+
+    private void ShowBrandsDropdown(bool show)
+    {
+        // For desktop hover
+        if (!isExpanded)
+        {
+            showBrandsDropdown = show;
+        }
+    }
+
+    private bool IsCurrentPage(string path, string? queryParam = null, string? queryValue = null)
+    {
+        var currentUri = new Uri(Nav.Uri);
+        var pathMatches = currentUri.LocalPath == path;
+        
+        if (!pathMatches)
+            return false;
+            
+        if (queryParam != null && queryValue != null)
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(currentUri.Query);
+            return query[queryParam] == queryValue;
+        }
+        
+        return pathMatches;
+    }
+
+    private string GetCategoryUrl(int typeId)
+    {
+        return $"/catalog?type={typeId}";
+    }
+
+    private string GetBrandUrl(int brandId)
+    {
+        return $"/catalog?brand={brandId}";
+    }
+}
+

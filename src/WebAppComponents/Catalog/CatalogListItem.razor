@@ -1,16 +1,49 @@
 ﻿@using eShop.WebAppComponents.Item
+@using System.Text.RegularExpressions
 @inject IProductImageUrlProvider ProductImages
 
-<div class="catalog-item">
-    <a class="catalog-product" href="@ItemHelper.Url(Item)" data-enhance-nav="false">
-        <span class='catalog-product-image'>
-            <img alt="@Item.Name" src='@ProductImages.GetProductImageUrl(Item)' />
-        </span>
-        <span class='catalog-product-content'>
-            <span class='name'>@Item.Name</span>
-            <span class='price'>$@Item.Price.ToString("0.00")</span>
-        </span>
-    </a>
+<div class="catalog-item" @onmouseenter="ShowQuickView" @onmouseleave="HideQuickView">
+    <div class="product-card">
+        <a href="@ItemHelper.Url(Item)" class="product-link" data-enhance-nav="false">
+            <div class="product-image-wrapper">
+                <img 
+                    alt="@Item.Name" 
+                    src="@ProductImages.GetProductImageUrl(Item)" 
+                    class="product-image"
+                    loading="lazy"
+                    srcset="@ProductImages.GetProductImageUrl(Item) 1x" />
+                
+                @if (showQuickView)
+                {
+                    <div class="quick-view-overlay">
+                        <button type="button" class="quick-view-btn" @onclick:preventDefault @onclick="OnQuickViewClick">
+                            Quick View
+                        </button>
+                    </div>
+                }
+            </div>
+            
+            <div class="product-info">
+                <h3 class="product-name">@((MarkupString)HighlightSearchTerm(Item.Name))</h3>
+                <p class="product-price">@($"${Item.Price:0.00}")</p>
+                
+                @if (!string.IsNullOrWhiteSpace(Item.Description) && Item.Description.Length > 80)
+                {
+                    <p class="product-description">@(Item.Description.Substring(0, 80))...</p>
+                }
+                else if (!string.IsNullOrWhiteSpace(Item.Description))
+                {
+                    <p class="product-description">@Item.Description</p>
+                }
+            </div>
+        </a>
+        
+        <div class="product-actions">
+            <button class="add-to-cart-btn button-primary" @onclick:preventDefault @onclick="OnAddToCart">
+                Add to Cart
+            </button>
+        </div>
+    </div>
 </div>
 
 @code {
@@ -19,4 +52,57 @@
 
     [Parameter]
     public bool IsLoggedIn { get; set; }
+
+    [Parameter]
+    public string? SearchTerm { get; set; }
+    
+    [Parameter]
+    public EventCallback<CatalogItem> OnQuickViewRequested { get; set; }
+
+    private bool showQuickView = false;
+
+    private void ShowQuickView()
+    {
+        showQuickView = true;
+    }
+
+    private void HideQuickView()
+    {
+        showQuickView = false;
+    }
+
+    private async Task OnQuickViewClick()
+    {
+        if (OnQuickViewRequested.HasDelegate)
+        {
+            await OnQuickViewRequested.InvokeAsync(Item);
+        }
+    }
+
+    private void OnAddToCart()
+    {
+        // Add to cart logic (to be implemented)
+        // For now, navigate to product details
+    }
+
+    private string HighlightSearchTerm(string text)
+    {
+        if (string.IsNullOrWhiteSpace(SearchTerm) || string.IsNullOrWhiteSpace(text))
+        {
+            return System.Net.WebUtility.HtmlEncode(text);
+        }
+
+        var escapedText = System.Net.WebUtility.HtmlEncode(text);
+        var escapedTerm = System.Net.WebUtility.HtmlEncode(SearchTerm);
+        
+        // Case-insensitive replacement with highlight span
+        var pattern = Regex.Escape(escapedTerm);
+        var highlighted = Regex.Replace(
+            escapedText, 
+            pattern, 
+            match => $"<mark class=\"search-highlight\">{match.Value}</mark>",
+            RegexOptions.IgnoreCase);
+        
+        return highlighted;
+    }
 }

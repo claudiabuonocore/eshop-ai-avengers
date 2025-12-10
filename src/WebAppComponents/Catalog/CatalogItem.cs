@@ -9,7 +9,10 @@ public record CatalogItem(
     int CatalogBrandId,
     CatalogBrand CatalogBrand,
     int CatalogTypeId,
-    CatalogItemType CatalogType);
+    CatalogItemType CatalogType)
+{
+    public int AvailableStock { get; init; }
+}
 
 public record CatalogResult(int PageIndex, int PageSize, int Count, List<CatalogItem> Data);
 public record CatalogBrand(int Id, string Brand);

@@ -1,0 +1,112 @@
+@page "/item/{id:int}"
+@using eShop.WebAppComponents.Shared
+@using eShop.WebAppComponents.Catalog
+@inject CatalogService CatalogService
+@inject IProductImageUrlProvider ProductImages
+@attribute [StreamRendering]
+
+<PageTitle>@(catalogItem?.Name ?? "Product") - AdventureWorks</PageTitle>
+
+@if (catalogItem == null)
+{
+    <div class="loading-container">
+        <p>Loading product...</p>
+    </div>
+}
+else
+{
+    <div class="item-page container">
+        <div class="item-content">
+            @* Image Gallery Section *@
+            <div class="item-gallery">
+                <ImageGallery 
+                    Images="@productImages"
+                    ImageAlt="@catalogItem.Name" />
+            </div>
+            
+            @* Product Details Section *@
+            <div class="item-info">
+                <ProductDetails Product="@catalogItem" />
+                
+                @* Sticky Add to Cart Section *@
+                <div class="item-actions sticky-actions">
+                    @if (catalogItem.AvailableStock > 0)
+                    {
+                        <button class="add-to-cart-btn button-primary" @onclick="AddToCart">
+                            <span class="btn-icon">🛒</span>
+                            Add to Cart
+                        </button>
+                        
+                        <div class="stock-info">
+                            <span class="stock-indicator available">●</span>
+                            <span>@catalogItem.AvailableStock in stock</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <button class="add-to-cart-btn button-primary" disabled>
+                            Out of Stock
+                        </button>
+                        
+                        <div class="stock-info">
+                            <span class="stock-indicator unavailable">●</span>
+                            <span>Currently unavailable</span>
+                        </div>
+                    }
+                    
+                    <a href="/catalog" class="back-to-catalog">
+                        ← Back to Catalog
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        @* Related Products Section *@
+        @if (relatedProducts != null && relatedProducts.Any())
+        {
+            <div class="related-products">
+                <FeaturedCollection 
+                    Title="You May Also Like"
+                    Description="More products from this category"
+                    Products="@relatedProducts"
+                    ViewAllUrl="@($"/catalog?type={catalogItem.CatalogTypeId}")" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private CatalogItem? catalogItem;
+    private List<string> productImages = new();
+    private IEnumerable<CatalogItem>? relatedProducts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load product details
+        catalogItem = await CatalogService.GetCatalogItem(Id);
+        
+        if (catalogItem != null)
+        {
+            // Generate image URLs (in a real app, these would come from the product data)
+            var mainImage = ProductImages.GetProductImageUrl(catalogItem);
+            productImages = new List<string> { mainImage };
+            
+            // Load related products (same category)
+            if (catalogItem.CatalogTypeId > 0)
+            {
+                var relatedResult = await CatalogService.GetCatalogItems(0, 4, null, catalogItem.CatalogTypeId, null);
+                relatedProducts = relatedResult.Data.Where(p => p.Id != catalogItem.Id).Take(4);
+            }
+        }
+    }
+
+    private void AddToCart()
+    {
+        // Add to cart logic (to be implemented)
+        // For now, just show a message or navigate
+    }
+}
+

@@ -26,6 +26,7 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    ignoreHTTPSErrors: true,
     ...devices['Desktop Chrome'],
   },
 
@@ -45,7 +46,7 @@ export default defineConfig({
     },
     {
       name: 'e2e tests without logged in',
-      testMatch: ['**/BrowseItemTest.spec.ts'],
+      testMatch: ['**/BrowseItemTest.spec.ts', '**/SearchTest.spec.ts', '**/BackcountryDesignTest.spec.ts'],
     }
     // {
     //   name: 'chromium',
@@ -90,6 +91,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     stderr: 'pipe',
     stdout: 'pipe',
-    timeout: process.env.CI ? (5 * 60_000) : 60_000,
+    timeout: process.env.CI ? (5 * 60_000) : 120_000,
+    ignoreHTTPSErrors: true,
   },
 });
