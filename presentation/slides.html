@@ -277,6 +277,57 @@
       font-weight: 600;
     }
 
+    .questions-list li {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .questions-list li::before {
+      content: '?';
+      color: var(--accent-magenta);
+      font-weight: 700;
+    }
+
+    /* Accomplishments slide */
+    .accomplishments-list li {
+      font-size: 20px;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .accomplishments-list li::before {
+      content: '✓';
+      color: #22C55E;
+      font-weight: 700;
+    }
+
+    .lesson-learned {
+      margin-top: 30px;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05));
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 800px;
+    }
+
+    .lesson-icon {
+      font-size: 24px;
+    }
+
+    .lesson-learned span {
+      font-size: 18px;
+      color: #FCD34D;
+    }
+
+    .lesson-learned em {
+      color: var(--accent-cyan);
+      font-style: normal;
+      font-weight: 600;
+    }
+
     .highlight-box {
       background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(139, 30, 139, 0.1));
       border-left: 4px solid var(--accent-cyan);
@@ -319,6 +370,155 @@
       margin-top: 8px;
       text-transform: uppercase;
       letter-spacing: 2px;
+    }
+
+    /* Before/After Comparison slide */
+    .comparison-slide {
+      padding-top: 60px;
+    }
+
+    .comparison-header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .comparison-subheader {
+      font-size: 20px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .comparison-subheader strong {
+      color: var(--accent-magenta);
+    }
+
+    .comparison-container {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      align-items: stretch;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      padding: 0 20px;
+    }
+
+    .comparison-panel {
+      flex: 1;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(145deg, rgba(10, 10, 15, 0.9), rgba(20, 20, 30, 0.8));
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .comparison-panel:hover {
+      transform: translateY(-4px);
+    }
+
+    .comparison-panel.before {
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .comparison-panel.before:hover {
+      box-shadow: 0 10px 40px rgba(239, 68, 68, 0.15);
+    }
+
+    .comparison-panel.after {
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .comparison-panel.after:hover {
+      box-shadow: 0 10px 40px rgba(34, 197, 94, 0.15);
+    }
+
+    .panel-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      padding: 16px 24px;
+      text-align: center;
+    }
+
+    .comparison-panel.before .panel-label {
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+      color: #EF4444;
+    }
+
+    .comparison-panel.after .panel-label {
+      background: linear-gradient(90deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+      color: #22C55E;
+    }
+
+    .panel-image-container {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
+    .panel-image-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .comparison-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: var(--accent-cyan);
+      position: relative;
+      z-index: 1;
+    }
+
+    .comparison-arrow span {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 8px;
+      color: var(--accent-magenta);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .tools-badge {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tool-tag {
+      background: linear-gradient(135deg, rgba(139, 30, 139, 0.3), rgba(34, 211, 238, 0.2));
+      border: 1px solid rgba(34, 211, 238, 0.4);
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-cyan);
     }
 
     /* Quote slide */
@@ -523,8 +723,61 @@
       </div>
     </div>
 
-    <!-- Slide 6: Key Quote -->
-    <div class="slide" data-slide="6">
+    <!-- Slide 6: Accomplishments -->
+    <div class="slide content-slide accomplishments-slide" data-slide="6">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="slide-header">Accomplishments</h2>
+      <div class="content-body">
+        <ul class="bullet-list accomplishments-list">
+          <li><strong>Generic rules & personas</strong> generation with AI recommendations → translated to tool-specific files</li>
+          <li><strong>UI Replatforming</strong> with spec-directed approach to better UX — worked without intervention</li>
+          <li><strong>New feature development</strong> with spec — required iteration to resolve errors</li>
+          <li><strong>Search feature</strong> from spec including Playwright e2e testing — minimal intervention</li>
+          <li><strong>Non-functional requirements (FedRAMP)</strong> → GitHub issues → outer-loop agent implementation with docs & unit tests — no intervention</li>
+          <li><strong>Rules updates</strong> for data classification & logging requirements (FedRAMP) → re-applied to tool-specific files</li>
+          <li><strong>MS Learn MCP server</strong> + rules changes → re-applied spec for reviews feature with different implementation/errors (.NET 10 upgrade)</li>
+        </ul>
+        <div class="lesson-learned">
+          <span class="lesson-icon">💡</span>
+          <span>Lesson: Pay attention to Copilot output on <em>what</em> it's doing and <em>why</em></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: UI/UX Transformation -->
+    <div class="slide comparison-slide" data-slide="7">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="comparison-header">UX/UI Transformation with SDD</h2>
+      <p class="comparison-subheader">Using <strong>Speckit</strong> and <strong>Spec Driven Development</strong> to revamp Adventure Works</p>
+      <div class="comparison-container">
+        <div class="comparison-panel before">
+          <div class="panel-label">Before</div>
+          <div class="panel-image-container">
+            <img src="oldAdventureWorks.jpeg" alt="Original Adventure Works UI">
+          </div>
+        </div>
+        <div class="comparison-arrow">
+          →
+          <span>SDD</span>
+        </div>
+        <div class="comparison-panel after">
+          <div class="panel-label">After</div>
+          <div class="panel-image-container">
+            <img src="adventureWorkUpgradedUI.png" alt="Upgraded Adventure Works UI">
+          </div>
+        </div>
+      </div>
+      <div class="tools-badge">
+        <span class="tool-tag">Speckit</span>
+        <span class="tool-tag">SDD</span>
+        <span class="tool-tag">AI-Assisted Design</span>
+      </div>
+    </div>
+
+    <!-- Slide 8: Key Quote -->
+    <div class="slide" data-slide="8">
       <div class="bg-gradient"></div>
       <div class="tribal-border"></div>
       <div class="quote-content">
@@ -534,8 +787,8 @@
       </div>
     </div>
 
-    <!-- Slide 7: Beyond Feature Development -->
-    <div class="slide content-slide" data-slide="7">
+    <!-- Slide 9: Beyond Feature Development -->
+    <div class="slide content-slide" data-slide="9">
       <div class="bg-gradient"></div>
       <div class="tribal-border"></div>
       <h2 class="slide-header">Beyond Feature Development</h2>
@@ -549,8 +802,8 @@
       </div>
     </div>
 
-    <!-- Slide 8: Practical Advice -->
-    <div class="slide content-slide" data-slide="8">
+    <!-- Slide 10: Practical Advice -->
+    <div class="slide content-slide" data-slide="10">
       <div class="bg-gradient"></div>
       <div class="tribal-border"></div>
       <h2 class="slide-header">Practical Advice</h2>
@@ -564,8 +817,26 @@
       </div>
     </div>
 
-    <!-- Slide 9: Thank You -->
-    <div class="slide title-slide" data-slide="9">
+    <!-- Slide 11: Open Questions -->
+    <div class="slide content-slide" data-slide="11">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="slide-header">Open Questions</h2>
+      <div class="content-body">
+        <ul class="bullet-list questions-list">
+          <li>What is the <strong>definitive source of truth</strong> as specs and implementations evolve?</li>
+          <li>How <strong>portable are specs</strong> across different tools and as tools change?</li>
+          <li>How can <strong>cross-cutting architectural changes</strong> (e.g., PII classification) be enforced for new features?</li>
+          <li>How should <strong>requirements changes/feature creep</strong> be managed—updating existing specs or creating new ones?</li>
+          <li>How do <strong>hallucinations in AI-generated tests</strong> impact TDD and regression risk?</li>
+          <li>How can <strong>human acceptance and trust</strong> in AI outputs be increased for skeptical clients?</li>
+          <li>What are the <strong>best practices</strong> for generating specs and tests for brownfield projects?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 12: Thank You -->
+    <div class="slide title-slide" data-slide="12">
       <div class="bg-gradient"></div>
       <div class="tribal-border"></div>
       <div class="logo-container" style="width: 200px; height: 200px;">
