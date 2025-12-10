@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Avengers - AI Immersion Takeaways</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-purple: #8B1E8B;
+      --accent-magenta: #D946EF;
+      --accent-cyan: #22D3EE;
+      --dark-bg: #0A0A0F;
+      --darker-bg: #050508;
+      --text-light: #F0F0F5;
+      --text-muted: #9CA3AF;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-light);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .slide-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      height: 100%;
+      padding: 60px 80px;
+      position: relative;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Background effects */
+    .bg-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(ellipse at 20% 80%, rgba(139, 30, 139, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(34, 211, 238, 0.1) 0%, transparent 40%),
+        radial-gradient(ellipse at 50% 50%, rgba(217, 70, 239, 0.05) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .tribal-border {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      border: 2px solid transparent;
+      border-image: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple), var(--accent-magenta), var(--accent-cyan)) 1;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    /* Title slide */
+    .title-slide {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .logo-container {
+      width: 300px;
+      height: 300px;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 30px rgba(217, 70, 239, 0.5));
+    }
+
+    .logo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 72px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent-magenta), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 60px rgba(217, 70, 239, 0.5);
+    }
+
+    .title-main {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 64px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--text-light), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .title-sub {
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Team slide */
+    .team-slide {
+      justify-content: center;
+      align-items: center;
+    }
+
+    .team-header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 60px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      z-index: 1;
+    }
+
+    .team-grid {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .team-member {
+      text-align: center;
+      padding: 30px;
+      background: linear-gradient(145deg, rgba(139, 30, 139, 0.1), rgba(10, 10, 15, 0.8));
+      border: 1px solid rgba(34, 211, 238, 0.2);
+      border-radius: 16px;
+      min-width: 180px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .team-member:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 40px rgba(217, 70, 239, 0.2);
+    }
+
+    .member-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-purple), var(--accent-cyan));
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .member-name {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .member-role {
+      font-size: 14px;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Content slides */
+    .content-slide {
+      padding-top: 80px;
+    }
+
+    .slide-header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 50px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .slide-header::after {
+      content: '';
+      display: block;
+      width: 120px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
+      margin-top: 16px;
+      border-radius: 2px;
+    }
+
+    .content-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bullet-list {
+      list-style: none;
+      max-width: 1000px;
+    }
+
+    .bullet-list li {
+      font-size: 26px;
+      font-weight: 400;
+      margin-bottom: 28px;
+      padding-left: 40px;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .bullet-list li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--accent-cyan);
+      font-size: 24px;
+    }
+
+    .bullet-list li strong {
+      color: var(--accent-magenta);
+      font-weight: 600;
+    }
+
+    .questions-list li {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .questions-list li::before {
+      content: '?';
+      color: var(--accent-magenta);
+      font-weight: 700;
+    }
+
+    /* Accomplishments slide */
+    .accomplishments-list li {
+      font-size: 20px;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .accomplishments-list li::before {
+      content: '✓';
+      color: #22C55E;
+      font-weight: 700;
+    }
+
+    .lesson-learned {
+      margin-top: 30px;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05));
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 800px;
+    }
+
+    .lesson-icon {
+      font-size: 24px;
+    }
+
+    .lesson-learned span {
+      font-size: 18px;
+      color: #FCD34D;
+    }
+
+    .lesson-learned em {
+      color: var(--accent-cyan);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(139, 30, 139, 0.1));
+      border-left: 4px solid var(--accent-cyan);
+      padding: 24px 32px;
+      margin: 20px 0;
+      border-radius: 0 12px 12px 0;
+      font-size: 24px;
+      max-width: 900px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      max-width: 1000px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 40px 30px;
+      background: linear-gradient(145deg, rgba(139, 30, 139, 0.15), rgba(10, 10, 15, 0.9));
+      border: 1px solid rgba(217, 70, 239, 0.2);
+      border-radius: 16px;
+    }
+
+    .stat-number {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 56px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Before/After Comparison slide */
+    .comparison-slide {
+      padding-top: 60px;
+    }
+
+    .comparison-header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .comparison-subheader {
+      font-size: 20px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .comparison-subheader strong {
+      color: var(--accent-magenta);
+    }
+
+    .comparison-container {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      align-items: stretch;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      padding: 0 20px;
+    }
+
+    .comparison-panel {
+      flex: 1;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(145deg, rgba(10, 10, 15, 0.9), rgba(20, 20, 30, 0.8));
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .comparison-panel:hover {
+      transform: translateY(-4px);
+    }
+
+    .comparison-panel.before {
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .comparison-panel.before:hover {
+      box-shadow: 0 10px 40px rgba(239, 68, 68, 0.15);
+    }
+
+    .comparison-panel.after {
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .comparison-panel.after:hover {
+      box-shadow: 0 10px 40px rgba(34, 197, 94, 0.15);
+    }
+
+    .panel-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      padding: 16px 24px;
+      text-align: center;
+    }
+
+    .comparison-panel.before .panel-label {
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+      color: #EF4444;
+    }
+
+    .comparison-panel.after .panel-label {
+      background: linear-gradient(90deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+      color: #22C55E;
+    }
+
+    .panel-image-container {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
+    .panel-image-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .comparison-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: var(--accent-cyan);
+      position: relative;
+      z-index: 1;
+    }
+
+    .comparison-arrow span {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 8px;
+      color: var(--accent-magenta);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .tools-badge {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tool-tag {
+      background: linear-gradient(135deg, rgba(139, 30, 139, 0.3), rgba(34, 211, 238, 0.2));
+      border: 1px solid rgba(34, 211, 238, 0.4);
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+    }
+
+    /* Quote slide */
+    .quote-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .big-quote {
+      font-size: 44px;
+      font-weight: 300;
+      max-width: 900px;
+      line-height: 1.4;
+      margin-bottom: 40px;
+    }
+
+    .big-quote span {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 600;
+    }
+
+    /* Navigation */
+    .nav-controls {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      width: 50px;
+      height: 50px;
+      border: 2px solid var(--accent-cyan);
+      background: rgba(10, 10, 15, 0.8);
+      color: var(--accent-cyan);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-btn:hover {
+      background: var(--accent-cyan);
+      color: var(--dark-bg);
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      color: var(--text-muted);
+      z-index: 100;
+    }
+
+    .slide-counter span {
+      color: var(--accent-cyan);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .slide {
+        padding: 40px 50px;
+      }
+      .title-main {
+        font-size: 48px;
+      }
+      .slide-header {
+        font-size: 32px;
+      }
+      .bullet-list li {
+        font-size: 22px;
+      }
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Keyboard hint */
+    .keyboard-hint {
+      position: fixed;
+      bottom: 30px;
+      left: 40px;
+      font-size: 14px;
+      color: var(--text-muted);
+      z-index: 100;
+    }
+
+    .keyboard-hint kbd {
+      background: rgba(34, 211, 238, 0.1);
+      border: 1px solid rgba(34, 211, 238, 0.3);
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin: 0 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    
+    <!-- Slide 1: Title -->
+    <div class="slide title-slide active" data-slide="1">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <div class="logo-container">
+        <img src="ai-avengers-logo.png" alt="AI Avengers Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="logo-placeholder" style="display:none;">AI</div>
+      </div>
+      <h1 class="title-main">AI AVENGERS</h1>
+      <p class="title-sub">AI Immersion Experience</p>
+    </div>
+
+    <!-- Slide 2: Team -->
+    <div class="slide team-slide" data-slide="2">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="team-header">THE TEAM</h2>
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="member-avatar">CB</div>
+          <div class="member-name">Claudia Buonocore</div>
+          <div class="member-role">Avenger</div>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">JW</div>
+          <div class="member-name">Jim Wooley</div>
+          <div class="member-role">Avenger</div>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">SM</div>
+          <div class="member-name">Stephan Marceau</div>
+          <div class="member-role">Avenger</div>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">BK</div>
+          <div class="member-name">Barry Kern</div>
+          <div class="member-role">Avenger</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Biggest Takeaways -->
+    <div class="slide content-slide" data-slide="3">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="slide-header">Biggest Takeaways</h2>
+      <div class="content-body">
+        <ul class="bullet-list">
+          <li>GenAI tools are <strong>bending how we build and deliver software</strong></li>
+          <li>Aspects of waterfall (like <strong>planning/requirements</strong>) are still important</li>
+          <li>Moved from one-shot prompting to <strong>structured approaches</strong></li>
+          <li>Eyes opened to <strong>Spec Driven Development (SDD)</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 4: Key Discoveries -->
+    <div class="slide content-slide" data-slide="4">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="slide-header">Key Discoveries</h2>
+      <div class="content-body">
+        <ul class="bullet-list">
+          <li><strong>Inner vs Outer Agents</strong> - different tools for different purposes</li>
+          <li><strong>Memory management</strong> - critical for context and continuity</li>
+          <li><strong>Chat/Agent modes</strong> - novel and practical way to get different outputs</li>
+          <li><strong>SDD works with any AI tooling</strong> - vendor agnostic approach</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 5: Brownfield Apps -->
+    <div class="slide content-slide" data-slide="5">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="slide-header">Brownfield Apps</h2>
+      <div class="content-body">
+        <div class="highlight-box">
+          <strong>1000%</strong> these are great tools for brownfield applications
+        </div>
+        <ul class="bullet-list" style="margin-top: 30px;">
+          <li>Documentation & onboarding generation is <strong>effortless</strong></li>
+          <li>The <strong>human becomes the bottleneck</strong> - reviewing and digesting output</li>
+          <li>Contributed to modern .NET codebase with <strong>zero prior .NET experience</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 6: Accomplishments -->
+    <div class="slide content-slide accomplishments-slide" data-slide="6">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="slide-header">Accomplishments</h2>
+      <div class="content-body">
+        <ul class="bullet-list accomplishments-list">
+          <li><strong>Generic rules & personas</strong> generation with AI recommendations → translated to tool-specific files</li>
+          <li><strong>UI Replatforming</strong> with spec-directed approach to better UX — worked without intervention</li>
+          <li><strong>New feature development</strong> with spec — required iteration to resolve errors</li>
+          <li><strong>Search feature</strong> from spec including Playwright e2e testing — minimal intervention</li>
+          <li><strong>Non-functional requirements (FedRAMP)</strong> → GitHub issues → outer-loop agent implementation with docs & unit tests — no intervention</li>
+          <li><strong>Rules updates</strong> for data classification & logging requirements (FedRAMP) → re-applied to tool-specific files</li>
+          <li><strong>MS Learn MCP server</strong> + rules changes → re-applied spec for reviews feature with different implementation/errors (.NET 10 upgrade)</li>
+        </ul>
+        <div class="lesson-learned">
+          <span class="lesson-icon">💡</span>
+          <span>Lesson: Pay attention to Copilot output on <em>what</em> it's doing and <em>why</em></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: UI/UX Transformation -->
+    <div class="slide comparison-slide" data-slide="7">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="comparison-header">UX/UI Transformation with SDD</h2>
+      <p class="comparison-subheader">Using <strong>Speckit</strong> and <strong>Spec Driven Development</strong> to revamp Adventure Works</p>
+      <div class="comparison-container">
+        <div class="comparison-panel before">
+          <div class="panel-label">Before</div>
+          <div class="panel-image-container">
+            <img src="oldAdventureWorks.jpeg" alt="Original Adventure Works UI">
+          </div>
+        </div>
+        <div class="comparison-arrow">
+          →
+          <span>SDD</span>
+        </div>
+        <div class="comparison-panel after">
+          <div class="panel-label">After</div>
+          <div class="panel-image-container">
+            <img src="adventureWorkUpgradedUI.png" alt="Upgraded Adventure Works UI">
+          </div>
+        </div>
+      </div>
+      <div class="tools-badge">
+        <span class="tool-tag">Speckit</span>
+        <span class="tool-tag">SDD</span>
+        <span class="tool-tag">AI-Assisted Design</span>
+      </div>
+    </div>
+
+    <!-- Slide 8: Key Quote -->
+    <div class="slide" data-slide="8">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <div class="quote-content">
+        <p class="big-quote">
+          "Will we get to a point where we're using AI for <span>everything</span> and we're just the humans <span>reviewing and approving</span>?"
+        </p>
+      </div>
+    </div>
+
+    <!-- Slide 9: Beyond Feature Development -->
+    <div class="slide content-slide" data-slide="9">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="slide-header">Beyond Feature Development</h2>
+      <div class="content-body">
+        <ul class="bullet-list">
+          <li><strong>Gap Analysis</strong> - comparing current state vs desired state</li>
+          <li><strong>Compliance Planning</strong> - helped create FedRAMP compliance roadmap</li>
+          <li><strong>GitHub Issues</strong> - automated issue creation via tooling</li>
+          <li>Using AI <strong>right and left</strong> of just software development</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 10: Practical Advice -->
+    <div class="slide content-slide" data-slide="10">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="slide-header">Practical Advice</h2>
+      <div class="content-body">
+        <ul class="bullet-list">
+          <li><strong>Use these tools on projects</strong> - and outside of projects</li>
+          <li>Stay up to date with the <strong>latest and greatest</strong></li>
+          <li>Adapt to <strong>client openness</strong> - AI-forward vs conservative approaches</li>
+          <li><strong>Trust matters</strong> - when contributing without deep domain knowledge</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 11: Open Questions -->
+    <div class="slide content-slide" data-slide="11">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <h2 class="slide-header">Open Questions</h2>
+      <div class="content-body">
+        <ul class="bullet-list questions-list">
+          <li>What is the <strong>definitive source of truth</strong> as specs and implementations evolve?</li>
+          <li>How <strong>portable are specs</strong> across different tools and as tools change?</li>
+          <li>How can <strong>cross-cutting architectural changes</strong> (e.g., PII classification) be enforced for new features?</li>
+          <li>How should <strong>requirements changes/feature creep</strong> be managed—updating existing specs or creating new ones?</li>
+          <li>How do <strong>hallucinations in AI-generated tests</strong> impact TDD and regression risk?</li>
+          <li>How can <strong>human acceptance and trust</strong> in AI outputs be increased for skeptical clients?</li>
+          <li>What are the <strong>best practices</strong> for generating specs and tests for brownfield projects?</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 12: Thank You -->
+    <div class="slide title-slide" data-slide="12">
+      <div class="bg-gradient"></div>
+      <div class="tribal-border"></div>
+      <div class="logo-container" style="width: 200px; height: 200px;">
+        <img src="ai-avengers-logo.png" alt="AI Avengers Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="logo-placeholder" style="display:none; font-size: 48px;">AI</div>
+      </div>
+      <h1 class="title-main" style="font-size: 56px;">THANK YOU</h1>
+      <p class="title-sub">Questions?</p>
+    </div>
+
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-controls">
+    <button class="nav-btn" onclick="prevSlide()">←</button>
+    <button class="nav-btn" onclick="nextSlide()">→</button>
+  </div>
+
+  <div class="slide-counter">
+    <span id="current-slide">1</span> / <span id="total-slides">9</span>
+  </div>
+
+  <div class="keyboard-hint">
+    <kbd>←</kbd> <kbd>→</kbd> or <kbd>Space</kbd> to navigate
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = document.querySelectorAll('.slide').length;
+
+    document.getElementById('total-slides').textContent = totalSlides;
+
+    function showSlide(n) {
+      const slides = document.querySelectorAll('.slide');
+      
+      if (n > totalSlides) currentSlide = 1;
+      if (n < 1) currentSlide = totalSlides;
+      
+      slides.forEach(slide => slide.classList.remove('active'));
+      slides[currentSlide - 1].classList.add('active');
+      
+      document.getElementById('current-slide').textContent = currentSlide;
+    }
+
+    function nextSlide() {
+      currentSlide++;
+      showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+      currentSlide--;
+      showSlide(currentSlide);
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+
+    // Touch navigation for mobile
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+    });
+
+    document.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const diff = touchStartX - touchEndX;
+      
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) nextSlide();
+        else prevSlide();
+      }
+    });
+  </script>
+</body>
+</html>
+
