@@ -1,0 +1,60 @@
+@using eShop.WebAppComponents.Catalog
+
+@*
+    FeaturedCollection Component
+    Displays a curated collection of products with title and grid layout
+    Used on homepage for seasonal collections, new arrivals, etc.
+*@
+
+<div class="featured-collection">
+    <div class="collection-header">
+        @if (!string.IsNullOrWhiteSpace(Title))
+        {
+            <h2 class="collection-title">@Title</h2>
+        }
+        
+        @if (!string.IsNullOrWhiteSpace(Description))
+        {
+            <p class="collection-description">@Description</p>
+        }
+        
+        @if (!string.IsNullOrWhiteSpace(ViewAllUrl))
+        {
+            <a href="@ViewAllUrl" class="collection-view-all">
+                View All
+                <span class="arrow">→</span>
+            </a>
+        }
+    </div>
+    
+    @if (Products != null && Products.Any())
+    {
+        <div class="collection-grid">
+            @foreach (var product in Products)
+            {
+                <CatalogListItem Item="@product" />
+            }
+        </div>
+    }
+    else
+    {
+        <div class="collection-empty">
+            <p>No products available in this collection.</p>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+    
+    [Parameter]
+    public string? Description { get; set; }
+    
+    [Parameter]
+    public IEnumerable<CatalogItem>? Products { get; set; }
+    
+    [Parameter]
+    public string? ViewAllUrl { get; set; }
+}
+

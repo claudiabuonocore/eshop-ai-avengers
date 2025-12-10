@@ -1,0 +1,159 @@
+@*
+    ImageGallery Component
+    Displays product images with thumbnail navigation and lightbox
+    Supports image zoom and keyboard navigation
+*@
+
+<div class="image-gallery">
+    @* Main Image Display *@
+    <div class="gallery-main" @onclick="OpenLightbox">
+        <img 
+            src="@CurrentImage" 
+            alt="@(ImageAlt ?? "Product image")"
+            class="gallery-main-image"
+            loading="eager" />
+        <div class="zoom-hint">
+            <span class="zoom-icon">🔍</span>
+            Click to zoom
+        </div>
+    </div>
+    
+    @* Thumbnail Navigation *@
+    @if (Images != null && Images.Count() > 1)
+    {
+        <div class="gallery-thumbnails">
+            <button 
+                class="thumbnail-nav prev" 
+                @onclick="PreviousImage"
+                disabled="@(currentIndex == 0)"
+                aria-label="Previous image">
+                ‹
+            </button>
+            
+            <div class="thumbnail-list">
+                @for (int i = 0; i < Images.Count(); i++)
+                {
+                    var index = i;
+                    var image = Images.ElementAt(i);
+                    <button 
+                        class="thumbnail @(index == currentIndex ? "active" : "")"
+                        @onclick="() => SelectImage(index)">
+                        <img src="@image" alt="@($"Thumbnail {index + 1}")" loading="lazy" />
+                    </button>
+                }
+            </div>
+            
+            <button 
+                class="thumbnail-nav next" 
+                @onclick="NextImage"
+                disabled="@(currentIndex == Images.Count() - 1)"
+                aria-label="Next image">
+                ›
+            </button>
+        </div>
+    }
+</div>
+
+@* Lightbox Modal *@
+@if (showLightbox)
+{
+    <div class="lightbox-backdrop" @onclick="CloseLightbox">
+        <div class="lightbox-container" @onclick:stopPropagation>
+            <button class="lightbox-close" @onclick="CloseLightbox" aria-label="Close lightbox">
+                ×
+            </button>
+            
+            <div class="lightbox-content">
+                @if (Images != null && Images.Count() > 1)
+                {
+                    <button 
+                        class="lightbox-nav prev" 
+                        @onclick="PreviousImage"
+                        disabled="@(currentIndex == 0)"
+                        aria-label="Previous image">
+                        ‹
+                    </button>
+                }
+                
+                <img 
+                    src="@CurrentImage" 
+                    alt="@(ImageAlt ?? "Product image")"
+                    class="lightbox-image" />
+                
+                @if (Images != null && Images.Count() > 1)
+                {
+                    <button 
+                        class="lightbox-nav next" 
+                        @onclick="NextImage"
+                        disabled="@(currentIndex == Images.Count() - 1)"
+                        aria-label="Next image">
+                        ›
+                    </button>
+                }
+            </div>
+            
+            @if (Images != null && Images.Count() > 1)
+            {
+                <div class="lightbox-counter">
+                    @(currentIndex + 1) / @Images.Count()
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public IEnumerable<string>? Images { get; set; }
+    
+    [Parameter]
+    public string? ImageAlt { get; set; }
+    
+    [Parameter]
+    public int InitialIndex { get; set; } = 0;
+
+    private int currentIndex = 0;
+    private bool showLightbox = false;
+
+    private string CurrentImage => Images?.ElementAtOrDefault(currentIndex) ?? "";
+
+    protected override void OnParametersSet()
+    {
+        currentIndex = InitialIndex;
+    }
+
+    private void SelectImage(int index)
+    {
+        if (Images != null && index >= 0 && index < Images.Count())
+        {
+            currentIndex = index;
+        }
+    }
+
+    private void PreviousImage()
+    {
+        if (currentIndex > 0)
+        {
+            currentIndex--;
+        }
+    }
+
+    private void NextImage()
+    {
+        if (Images != null && currentIndex < Images.Count() - 1)
+        {
+            currentIndex++;
+        }
+    }
+
+    private void OpenLightbox()
+    {
+        showLightbox = true;
+    }
+
+    private void CloseLightbox()
+    {
+        showLightbox = false;
+    }
+}
+

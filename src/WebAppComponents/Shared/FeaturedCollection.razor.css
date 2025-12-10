@@ -1,0 +1,121 @@
+/* Featured Collection Component Styles */
+
+.featured-collection {
+    width: 100%;
+    padding: var(--section-margin-mobile) 0;
+}
+
+/* Collection Header */
+.collection-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+    text-align: center;
+}
+
+.collection-title {
+    font-size: var(--font-3xl);
+    font-weight: var(--weight-bold);
+    color: var(--bc-black);
+    margin: 0;
+}
+
+.collection-description {
+    font-size: var(--font-lg);
+    color: var(--bc-gray-dark);
+    margin: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.collection-view-all {
+    font-size: var(--font-base);
+    font-weight: var(--weight-semibold);
+    color: var(--bc-green-primary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: var(--transition-colors);
+    margin-top: var(--space-2);
+}
+
+.collection-view-all:hover {
+    color: var(--bc-green-dark);
+}
+
+.collection-view-all .arrow {
+    transition: transform var(--duration-base) var(--ease-out);
+}
+
+.collection-view-all:hover .arrow {
+    transform: translateX(4px);
+}
+
+/* Collection Grid */
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: var(--space-6);
+}
+
+/* Empty State */
+.collection-empty {
+    text-align: center;
+    padding: var(--space-12);
+    color: var(--bc-gray-mid);
+}
+
+/* Responsive Grid */
+
+/* Small tablets and up: 2 columns */
+@media (min-width: 640px) {
+    .collection-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Tablets and up: 3 columns */
+@media (min-width: 768px) {
+    .featured-collection {
+        padding: var(--section-margin-desktop) 0;
+    }
+    
+    .collection-title {
+        font-size: var(--font-4xl);
+    }
+    
+    .collection-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Desktop: 4 columns */
+@media (min-width: 1024px) {
+    .collection-header {
+        text-align: left;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+    }
+    
+    .collection-description {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    .collection-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--space-8);
+    }
+}
+
+/* Large desktop: maintain 4 columns but with max width */
+@media (min-width: 1280px) {
+    .collection-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+

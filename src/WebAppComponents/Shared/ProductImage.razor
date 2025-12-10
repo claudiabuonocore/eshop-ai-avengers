@@ -1,0 +1,52 @@
+@*
+    ProductImage Component
+    Displays product image with fallback placeholder on error
+*@
+
+<div class="product-image-container @CssClass">
+    @if (imageError)
+    {
+        <div class="image-placeholder">
+            <div class="placeholder-icon">📦</div>
+            <div class="placeholder-text">No Image Available</div>
+        </div>
+    }
+    else
+    {
+        <img 
+            src="@Src" 
+            alt="@Alt"
+            class="@ImageClass"
+            loading="@Loading"
+            @onerror="HandleImageError"
+            srcset="@SrcSet" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Src { get; set; } = "";
+    
+    [Parameter]
+    public string Alt { get; set; } = "Product image";
+    
+    [Parameter]
+    public string Loading { get; set; } = "lazy"; // lazy, eager
+    
+    [Parameter]
+    public string? SrcSet { get; set; }
+    
+    [Parameter]
+    public string? CssClass { get; set; }
+    
+    [Parameter]
+    public string ImageClass { get; set; } = "";
+
+    private bool imageError = false;
+
+    private void HandleImageError()
+    {
+        imageError = true;
+    }
+}
+

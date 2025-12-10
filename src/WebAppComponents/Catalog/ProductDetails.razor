@@ -1,0 +1,122 @@
+@using eShop.WebAppComponents.Catalog
+
+@*
+    ProductDetails Component
+    Displays comprehensive product information including specifications and features
+*@
+
+<div class="product-details">
+    @if (Product != null)
+    {
+        <div class="product-header">
+            <h1 class="product-title">@Product.Name</h1>
+            <div class="product-price-section">
+                <span class="product-price">@($"${Product.Price:0.00}")</span>
+            </div>
+        </div>
+        
+        @if (!string.IsNullOrWhiteSpace(Product.Description))
+        {
+            <div class="product-section">
+                <h2 class="section-heading">Description</h2>
+                <p class="product-description">@Product.Description</p>
+            </div>
+        }
+        
+        <div class="product-section">
+            <h2 class="section-heading">Product Information</h2>
+            <dl class="product-specs">
+                @if (Product.CatalogBrand != null)
+                {
+                    <div class="spec-row">
+                        <dt class="spec-label">Brand</dt>
+                        <dd class="spec-value">@Product.CatalogBrand.Brand</dd>
+                    </div>
+                }
+                
+                @if (Product.CatalogType != null)
+                {
+                    <div class="spec-row">
+                        <dt class="spec-label">Category</dt>
+                        <dd class="spec-value">@Product.CatalogType.Type</dd>
+                    </div>
+                }
+                
+                <div class="spec-row">
+                    <dt class="spec-label">SKU</dt>
+                    <dd class="spec-value">@Product.Id</dd>
+                </div>
+                
+                <div class="spec-row">
+                    <dt class="spec-label">Availability</dt>
+                    <dd class="spec-value">
+                        @if (Product.AvailableStock > 0)
+                        {
+                            <span class="stock-badge in-stock">
+                                In Stock (@Product.AvailableStock available)
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="stock-badge out-of-stock">
+                                Out of Stock
+                            </span>
+                        }
+                    </dd>
+                </div>
+            </dl>
+        </div>
+        
+        @* Features Section *@
+        <div class="product-section">
+            <h2 class="section-heading">Features</h2>
+            <ul class="product-features">
+                @if (Product.CatalogType?.Type == "Jackets")
+                {
+                    <li>Weather-resistant construction</li>
+                    <li>Breathable fabric technology</li>
+                    <li>Multiple secure pockets</li>
+                    <li>Adjustable fit system</li>
+                }
+                else if (Product.CatalogType?.Type == "Bags")
+                {
+                    <li>Durable, tear-resistant material</li>
+                    <li>Ergonomic design for comfort</li>
+                    <li>Multiple compartments for organization</li>
+                    <li>Reinforced stitching and stress points</li>
+                }
+                else if (Product.CatalogType?.Type == "Climbing")
+                {
+                    <li>High-strength construction</li>
+                    <li>Safety certified for climbing use</li>
+                    <li>Lightweight yet durable</li>
+                    <li>Optimized for performance</li>
+                }
+                else
+                {
+                    <li>Premium quality materials</li>
+                    <li>Designed for outdoor adventure</li>
+                    <li>Built to last</li>
+                    <li>Adventure-tested performance</li>
+                }
+            </ul>
+        </div>
+        
+        @* Care Instructions *@
+        <div class="product-section">
+            <h2 class="section-heading">Care Instructions</h2>
+            <ul class="care-instructions">
+                <li>Follow care label instructions</li>
+                <li>Store in a cool, dry place</li>
+                <li>Avoid prolonged exposure to direct sunlight</li>
+                <li>Clean according to manufacturer guidelines</li>
+            </ul>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public required CatalogItem Product { get; set; }
+}
+

@@ -1,0 +1,262 @@
+/**
+ * Site-wide styles with Backcountry theme
+ * Applies color scheme and base styling
+ */
+
+/* Import theme variables */
+@import 'backcountry-theme.css';
+
+/* ==================== Base Elements ==================== */
+
+a {
+    color: var(--bc-green-primary);
+    text-decoration: none;
+    transition: var(--transition-colors);
+}
+
+a:hover {
+    color: var(--bc-green-dark);
+    text-decoration: underline;
+}
+
+a:focus {
+    outline: 2px solid var(--bc-green-primary);
+    outline-offset: 2px;
+}
+
+/* ==================== Buttons ==================== */
+
+.button-primary {
+    background: var(--bc-cta-primary);
+    color: #FFF;
+    border: none;
+    padding: var(--button-padding-y) var(--button-padding-x);
+    border-radius: var(--radius-base);
+    font-weight: var(--weight-semibold);
+    cursor: pointer;
+    transition: var(--transition-colors);
+}
+
+.button-primary:hover {
+    background: var(--bc-cta-hover);
+}
+
+.button-primary:active {
+    background: var(--bc-cta-active);
+}
+
+.button-secondary {
+    background: #FFF;
+    color: var(--bc-green-primary);
+    border: 2px solid var(--bc-green-primary);
+    padding: var(--button-padding-y) var(--button-padding-x);
+    border-radius: var(--radius-base);
+    font-weight: var(--weight-semibold);
+    cursor: pointer;
+    transition: var(--transition-all);
+}
+
+.button-secondary:hover {
+    background: var(--bc-green-pale);
+    border-color: var(--bc-green-dark);
+    color: var(--bc-green-dark);
+}
+
+.button-outline {
+    background: transparent;
+    color: var(--bc-gray-dark);
+    border: 1px solid var(--bc-gray-light);
+    padding: var(--button-padding-y) var(--button-padding-x);
+    border-radius: var(--radius-base);
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+    transition: var(--transition-all);
+}
+
+.button-outline:hover {
+    border-color: var(--bc-gray-dark);
+    color: var(--bc-black);
+}
+
+/* ==================== Form Elements ==================== */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+textarea,
+select {
+    border: 1px solid var(--bc-gray-light);
+    border-radius: var(--radius-base);
+    padding: var(--input-padding-y) var(--input-padding-x);
+    font-family: inherit;
+    font-size: var(--font-base);
+    color: var(--bc-black);
+    background: #FFF;
+    transition: var(--transition-colors);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--bc-green-primary);
+    box-shadow: 0 0 0 3px var(--bc-green-pale);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--bc-gray-mid);
+}
+
+/* ==================== Cards ==================== */
+
+.card {
+    background: #FFF;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-base);
+    padding: var(--card-padding);
+    transition: var(--transition-all);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    font-size: var(--font-xl);
+    font-weight: var(--weight-semibold);
+    color: var(--bc-black);
+    margin-bottom: var(--space-4);
+}
+
+.card-body {
+    color: var(--bc-gray-dark);
+}
+
+/* ==================== Backgrounds ==================== */
+
+.bg-primary {
+    background-color: var(--bc-green-primary);
+    color: #FFF;
+}
+
+.bg-secondary {
+    background-color: var(--bc-sand);
+    color: var(--bc-black);
+}
+
+.bg-light {
+    background-color: var(--bc-gray-pale);
+}
+
+.bg-dark {
+    background-color: var(--bc-black);
+    color: #FFF;
+}
+
+.bg-earth {
+    background-color: var(--bc-brown-primary);
+    color: #FFF;
+}
+
+/* ==================== Text Colors ==================== */
+
+.text-primary {
+    color: var(--bc-green-primary);
+}
+
+.text-secondary {
+    color: var(--bc-gray-dark);
+}
+
+.text-muted {
+    color: var(--bc-gray-mid);
+}
+
+.text-dark {
+    color: var(--bc-black);
+}
+
+.text-success {
+    color: var(--bc-success);
+}
+
+.text-error {
+    color: var(--bc-error);
+}
+
+.text-warning {
+    color: var(--bc-warning);
+}
+
+/* ==================== Borders ==================== */
+
+.border {
+    border: 1px solid var(--bc-gray-light);
+}
+
+.border-top {
+    border-top: 1px solid var(--bc-gray-light);
+}
+
+.border-bottom {
+    border-bottom: 1px solid var(--bc-gray-light);
+}
+
+.border-primary {
+    border-color: var(--bc-green-primary);
+}
+
+/* ==================== Spacing Utilities ==================== */
+
+.mt-1 { margin-top: var(--space-1); }
+.mt-2 { margin-top: var(--space-2); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-8 { margin-top: var(--space-8); }
+.mt-12 { margin-top: var(--space-12); }
+.mt-16 { margin-top: var(--space-16); }
+
+.mb-1 { margin-bottom: var(--space-1); }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+.mb-12 { margin-bottom: var(--space-12); }
+.mb-16 { margin-bottom: var(--space-16); }
+
+.p-4 { padding: var(--space-4); }
+.p-6 { padding: var(--space-6); }
+.p-8 { padding: var(--space-8); }
+
+.px-4 { padding-left: var(--space-4); padding-right: var(--space-4); }
+.px-6 { padding-left: var(--space-6); padding-right: var(--space-6); }
+
+.py-4 { padding-top: var(--space-4); padding-bottom: var(--space-4); }
+.py-6 { padding-top: var(--space-6); padding-bottom: var(--space-6); }
+
+/* ==================== Responsive Utilities ==================== */
+
+@media (max-width: 767px) {
+  .hidden-mobile { display: none; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hidden-tablet { display: none; }
+}
+
+@media (min-width: 1024px) {
+  .hidden-desktop { display: none; }
+}
+
+@media (min-width: 768px) {
+  .show-desktop { display: block; }
+  .hide-mobile { display: none; }
+}
+

@@ -1,33 +1,61 @@
 ﻿@using Microsoft.AspNetCore.Components.Endpoints
+@using eShop.WebAppComponents.Layout
+@inject NavigationManager Nav
 
-<div class="eshop-header @(IsCatalog? "home" : "")">
-    <div class="eshop-header-hero">
-        @{
-            var headerImage = IsCatalog ? "images/header-home.webp" : "images/header.webp";
-        }
-        <img role="presentation" src="@headerImage" />
-    </div>
-    <div class="eshop-header-container">
-        <nav class="eshop-header-navbar">
-            <a class="logo logo-header" href="">
-                <img alt="AdventureWorks" src="images/logo-header.svg" class="logo logo-header" />
+<header class="site-header">
+    <div class="header-container">
+        <div class="header-top">
+            <a class="logo-link" href="/">
+                <img alt="AdventureWorks" src="images/logo-header.svg" class="site-logo" />
             </a>
             
-            <UserMenu />
-            <CartMenu />
-        </nav>
-        <div class="eshop-header-intro">
-            <h1><SectionOutlet SectionName="page-header-title" /></h1>
-            <p><SectionOutlet SectionName="page-header-subtitle" /></p>
+            <div class="header-search">
+                <form method="get" action="/catalog" class="search-form">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input 
+                            type="search" 
+                            name="q" 
+                            placeholder="Search gear & apparel" 
+                            class="search-input"
+                            @bind="searchTerm"
+                            @bind:event="oninput"
+                            aria-label="Search products" />
+                        @if (!string.IsNullOrWhiteSpace(searchTerm))
+                        {
+                            <a href="/catalog" class="search-clear" aria-label="Clear search">
+                                ×
+                            </a>
+                        }
+                    </div>
+                    <button type="submit" class="search-submit-btn">Search</button>
+                </form>
+            </div>
+            
+            <div class="header-actions">
+                <a href="/support" class="expert-help-link">
+                    <span class="help-icon">💬</span>
+                    <span class="help-text">Expert Help</span>
+                </a>
+                <UserMenu />
+                <CartMenu />
+            </div>
+        </div>
+        
+        <div class="header-nav">
+            <NavMenu />
         </div>
     </div>
-</div>
+</header>
 
 @code {
-    [CascadingParameter]
-    public HttpContext? HttpContext { get; set; }
+    private string searchTerm = "";
 
-    // We can use Endpoint Metadata to determine the page currently being visited
-    private Type? PageComponentType => HttpContext?.GetEndpoint()?.Metadata.OfType<ComponentTypeMetadata>().FirstOrDefault()?.Type;
-    private bool IsCatalog => PageComponentType == typeof(Pages.Catalog.Catalog);
+    protected override void OnInitialized()
+    {
+        // Get search term from URL if present
+        var uri = new Uri(Nav.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        searchTerm = query["q"] ?? "";
+    }
 }

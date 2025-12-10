@@ -1,0 +1,61 @@
+@*
+    HeroSection Component
+    Displays full-width hero banner with image, headline, and CTA
+    Used on homepage for seasonal promotions and featured content
+*@
+
+<div class="hero-section">
+    @if (!string.IsNullOrWhiteSpace(ImageUrl))
+    {
+        <div class="hero-image-wrapper">
+            <img src="@ImageUrl" alt="@ImageAlt" class="hero-image" loading="eager" />
+            <div class="hero-overlay"></div>
+        </div>
+    }
+    
+    <div class="hero-content">
+        @if (!string.IsNullOrWhiteSpace(Eyebrow))
+        {
+            <p class="hero-eyebrow">@Eyebrow</p>
+        }
+        
+        @if (!string.IsNullOrWhiteSpace(Headline))
+        {
+            <h1 class="hero-headline">@Headline</h1>
+        }
+        
+        @if (!string.IsNullOrWhiteSpace(Subheadline))
+        {
+            <p class="hero-subheadline">@Subheadline</p>
+        }
+        
+        @if (!string.IsNullOrWhiteSpace(CtaText) && !string.IsNullOrWhiteSpace(CtaUrl))
+        {
+            <a href="@CtaUrl" class="hero-cta button-primary">@CtaText</a>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? ImageUrl { get; set; }
+    
+    [Parameter]
+    public string ImageAlt { get; set; } = "Hero image";
+    
+    [Parameter]
+    public string? Eyebrow { get; set; }
+    
+    [Parameter]
+    public string? Headline { get; set; }
+    
+    [Parameter]
+    public string? Subheadline { get; set; }
+    
+    [Parameter]
+    public string? CtaText { get; set; }
+    
+    [Parameter]
+    public string? CtaUrl { get; set; }
+}
+

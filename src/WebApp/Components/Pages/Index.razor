@@ -1,0 +1,70 @@
+@page "/"
+@using eShop.WebAppComponents.Shared
+@using eShop.WebAppComponents.Catalog
+@inject CatalogService CatalogService
+@attribute [StreamRendering]
+
+<PageTitle>AdventureWorks - Outdoor Gear & Equipment</PageTitle>
+
+@* Hero Section *@
+<HeroSection 
+    ImageUrl="https://images.unsplash.com/photo-1551632811-561732d1e306?w=1920&h=600&fit=crop"
+    ImageAlt="Mountain adventure gear"
+    Eyebrow="WINTER 2025 COLLECTION"
+    Headline="Gear Up for Your Next Adventure"
+    Subheadline="Discover premium outdoor equipment built for the mountains, trails, and beyond."
+    CtaText="Shop Now"
+    CtaUrl="/catalog" />
+
+<div class="container">
+    @* Featured Collections *@
+    @if (winterEssentials != null)
+    {
+        <FeaturedCollection 
+            Title="Winter Essentials"
+            Description="Everything you need to conquer the cold"
+            Products="@winterEssentials"
+            ViewAllUrl="/catalog?type=6" />
+    }
+    
+    @if (newArrivals != null)
+    {
+        <FeaturedCollection 
+            Title="New Arrivals"
+            Description="Fresh gear just in"
+            Products="@newArrivals"
+            ViewAllUrl="/catalog" />
+    }
+    
+    @if (topPicks != null)
+    {
+        <FeaturedCollection 
+            Title="Top Picks"
+            Description="Customer favorites and bestsellers"
+            Products="@topPicks"
+            ViewAllUrl="/catalog" />
+    }
+</div>
+
+@code {
+    private IEnumerable<CatalogItem>? winterEssentials;
+    private IEnumerable<CatalogItem>? newArrivals;
+    private IEnumerable<CatalogItem>? topPicks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load featured collections
+        // Winter Essentials: Jackets (Type 6)
+        var winterResult = await CatalogService.GetCatalogItems(0, 4, null, 6, null);
+        winterEssentials = winterResult.Data;
+        
+        // New Arrivals: Most recent products (first 4)
+        var newArrivalsResult = await CatalogService.GetCatalogItems(0, 4, null, null, null);
+        newArrivals = newArrivalsResult.Data;
+        
+        // Top Picks: Featured products (skipping first 4, next 4)
+        var topPicksResult = await CatalogService.GetCatalogItems(1, 4, null, null, null);
+        topPicks = topPicksResult.Data;
+    }
+}
+
