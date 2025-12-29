@@ -1,4 +1,5 @@
 ﻿@using eShop.WebAppComponents.Item
+@using System.Text.RegularExpressions
 @inject IProductImageUrlProvider ProductImages
 
 <div class="catalog-item">
@@ -7,7 +8,7 @@
             <img alt="@Item.Name" src='@ProductImages.GetProductImageUrl(Item)' />
         </span>
         <span class='catalog-product-content'>
-            <span class='name'>@Item.Name</span>
+            <span class='name'>@((MarkupString)HighlightSearchTerm(Item.Name))</span>
             <span class='price'>$@Item.Price.ToString("0.00")</span>
         </span>
     </a>
@@ -19,4 +20,28 @@
 
     [Parameter]
     public bool IsLoggedIn { get; set; }
+
+    [Parameter]
+    public string? SearchTerm { get; set; }
+
+    private string HighlightSearchTerm(string text)
+    {
+        if (string.IsNullOrWhiteSpace(SearchTerm) || string.IsNullOrWhiteSpace(text))
+        {
+            return System.Net.WebUtility.HtmlEncode(text);
+        }
+
+        var escapedText = System.Net.WebUtility.HtmlEncode(text);
+        var escapedTerm = System.Net.WebUtility.HtmlEncode(SearchTerm);
+        
+        // Case-insensitive replacement with highlight span
+        var pattern = Regex.Escape(escapedTerm);
+        var highlighted = Regex.Replace(
+            escapedText, 
+            pattern, 
+            match => $"<mark class=\"search-highlight\">{match.Value}</mark>",
+            RegexOptions.IgnoreCase);
+        
+        return highlighted;
+    }
 }

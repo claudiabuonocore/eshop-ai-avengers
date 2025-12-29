@@ -1,0 +1,29 @@
+# eshop-ai-avengers Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2025-12-09
+
+## Active Technologies
+
+- C# 12 / .NET 10 + Blazor (SSR + streaming), ASP.NET Core Minimal APIs (001-product-search)
+
+## Project Structure
+
+```text
+src/
+tests/
+```
+
+## Commands
+
+# Add commands for C# 12 / .NET 10
+
+## Code Style
+
+C# 12 / .NET 10: Follow standard conventions
+
+## Recent Changes
+
+- 001-product-search: Added C# 12 / .NET 10 + Blazor (SSR + streaming), ASP.NET Core Minimal APIs
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

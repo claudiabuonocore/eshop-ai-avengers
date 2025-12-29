@@ -1,0 +1,75 @@
+openapi: 3.0.3
+info:
+  title: Catalog Search Suggestions API
+  description: New endpoint for search autocomplete functionality
+  version: 1.0.0
+
+paths:
+  /api/catalog/items/suggestions:
+    get:
+      operationId: getSearchSuggestions
+      summary: Get search suggestions
+      description: Returns product name suggestions based on prefix matching
+      tags:
+        - Search
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Search prefix (minimum 2 characters)
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 100
+      responses:
+        '200':
+          description: List of matching suggestions
+          content:
+            application/json:
+              schema:
+                type: array
+                maxItems: 5
+                items:
+                  $ref: '#/components/schemas/SearchSuggestion'
+        '400':
+          description: Invalid query parameter
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+components:
+  schemas:
+    SearchSuggestion:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Product ID
+          example: 1
+        name:
+          type: string
+          description: Product name
+          example: "Alpine Backpack"
+        brand:
+          type: string
+          nullable: true
+          description: Brand name
+          example: "Alpine"
+    
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+
